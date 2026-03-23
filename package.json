@@ -15,6 +15,7 @@
     "lint": "npm run lint:types && npm run lint:js && npm run lint:css && npm run check:css-vars && npm run check:css-classes"
   },
   "devDependencies": {
+    "@types/node": "^25.5.0",
     "typescript": "~5.9.3",
     "vite": "^7.2.4"
   },
