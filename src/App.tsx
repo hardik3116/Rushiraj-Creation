@@ -128,7 +128,7 @@ export default function App() {
               <FileText size={15} className="text-primary-foreground" />
             </div>
             <div className="hidden sm:block">
-              <h1 className="text-sm font-bold text-foreground leading-none">Rushiraj Creation</h1>
+              <h1 className="text-sm font-bold text-foreground leading-none">Bill PDF Tool</h1>
               <p className="text-[10px] text-muted-foreground mt-0.5">Professional Invoice &amp; Challan Generator</p>
             </div>
             <span className="sm:hidden text-sm font-bold text-foreground">Bill PDF</span>
