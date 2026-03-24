@@ -1,7 +1,7 @@
 import { createClient } from '@blinkdotnew/sdk';
 
 export const blink = createClient({
-  projectId: import.meta.env.VITE_BLINK_PROJECT_ID,
-  publishableKey: import.meta.env.VITE_BLINK_PUBLISHABLE_KEY,
+  projectId: "bill-pdf-tool-flzu8tze",
+  publishableKey: "blnk_pk_nz-CZfSs3tYNefm6VNPazOHDjD2D-dCs",
   auth: { mode: 'managed' },
 });
