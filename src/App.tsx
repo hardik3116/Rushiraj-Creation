@@ -24,9 +24,13 @@ export default function App() {
   const invoicePdfRef = useRef<HTMLDivElement>(null);
   const challanPdfRef = useRef<HTMLDivElement>(null);
 
+  const safeInvoiceNumber = invoiceData.invoiceNumber?.trim() || 'draft';
+  const safeChallanNumber = challanData.challanNo?.trim() || 'draft';
   const fileName = tab === 'invoice'
-    ? `Invoice-${invoiceData.invoiceNumber || 'draft'}.pdf`
-    : `Challan-${challanData.challanNo || 'draft'}.pdf`;
+    ? `invoice-${safeInvoiceNumber}.pdf`
+    : `challan-${safeChallanNumber}.pdf`;
+
+  const [printing, setPrinting] = useState(false);
 
   const handleDownload = async () => {
     const el = tab === 'invoice' ? invoicePdfRef.current : challanPdfRef.current;
@@ -85,6 +89,47 @@ export default function App() {
     finally { setDownloading(false); }
   };
 
+  const handlePrint = () => {
+    if (typeof window === 'undefined') return;
+
+    const source = tab === 'invoice' ? invoicePdfRef.current : challanPdfRef.current;
+    if (!source) return;
+
+    const printWindow = window.open('', '_blank');
+    if (!printWindow) return;
+
+    const html = `
+      <html>
+        <head>
+          <title>${tab === 'invoice' ? 'Invoice' : 'Challan'} - Print</title>
+          <style>
+            @page { size: A4 portrait; margin: 10mm; }
+            html, body { margin: 0; padding: 0; width: 210mm; min-height: 297mm; }
+            body { display: flex; justify-content: center; align-items: start; }
+          </style>
+        </head>
+        <body>
+          ${source.outerHTML}
+        </body>
+      </html>
+    `;
+
+    printWindow.document.open();
+    printWindow.document.write(html);
+    printWindow.document.close();
+
+    printWindow.focus();
+    setPrinting(true);
+
+    printWindow.onload = () => {
+      printWindow.print();
+      setTimeout(() => {
+        printWindow.close();
+        setPrinting(false);
+      }, 300);
+    };
+  };
+
   const handleScannedData = (partial: Partial<InvoiceData>) => {
     setInvoiceData(prev => ({ ...prev, ...partial }));
   };
@@ -104,6 +149,7 @@ export default function App() {
           Always mounted at exact 794px width, off-screen.
           html2canvas reads these for pixel-perfect PDF generation. */}
       <div
+        id="pdf-capture-area"
         style={{
           position: 'fixed',
           left: '-9999px',
@@ -119,99 +165,82 @@ export default function App() {
         <ChallanPreview ref={challanPdfRef} data={challanData} />
       </div>
 
+      {/* ═══ VISIBLE PRINT TARGET ═══
+          This is what gets printed by @media print.
+          Remains hidden on screen but visible for print. */}
+      <div id="print-output" style={{ display: 'none' }}>
+        {tab === 'invoice' ? (
+          <InvoicePreview data={invoiceData} />
+        ) : (
+          <ChallanPreview data={challanData} />
+        )}
+      </div>
+
       {/* ─── TOP NAV ─── */}
-      <header className="sticky top-0 z-40 bg-card border-b border-border shadow-sm">
+      <header className="sticky top-0 z-40 bg-gradient-to-r from-[#0f285d] via-[#1b4f8f] to-[#5f8ad0] text-white shadow-sm">
         <div className="max-w-screen-2xl mx-auto px-3 sm:px-5 h-14 flex items-center justify-between gap-3">
-          {/* Logo */}
-          <div className="flex items-center gap-2.5 shrink-0">
+          {/* Left side */}
+          <div className="flex items-center gap-2">
+            <button
+              className="md:hidden flex items-center justify-center w-8 h-8 rounded-lg bg-white/20 text-white"
+              onClick={() => setMobileView(prev => (prev === 'form' ? 'preview' : 'form'))}
+              aria-label="Toggle mobile view"
+            >
+              ☰
+            </button>
             <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
               <FileText size={15} className="text-primary-foreground" />
             </div>
-            <div className="hidden sm:block">
-              <h1 className="text-sm font-bold text-foreground leading-none">Rushiraj Creation</h1>
-              <p className="text-[10px] text-muted-foreground mt-0.5">Professional Invoice &amp; Challan Generator</p>
+            <div className="hidden sm:flex flex-col leading-none">
+              <span className="text-sm font-bold text-white">Rushiraj Creation</span>
+              <span className="text-[10px] text-white/70">Invoice + Challan</span>
             </div>
-            <span className="sm:hidden text-sm font-bold text-foreground">Bill Rushiraj Creation</span>
           </div>
 
-          {/* Tab switcher (desktop) */}
-          <div className="hidden md:flex items-center bg-muted rounded-lg p-1 gap-1">
-            <button
-              onClick={() => setTab('invoice')}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-semibold transition-all ${tab === 'invoice' ? 'bg-card text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
-            >
-              <ReceiptText size={14} /> Invoice
-            </button>
-            <button
-              onClick={() => setTab('challan')}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-semibold transition-all ${tab === 'challan' ? 'bg-card text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
-            >
-              <Printer size={14} /> Delivery Challan
-            </button>
+          {/* Center title */}
+          <div className="flex-1 text-center">
+            <h1 className="text-sm sm:text-base font-bold">Bill Rushiraj Creation</h1>
           </div>
 
-          {/* Actions */}
+          {/* Right side UI actions */}
           <div className="flex items-center gap-2">
-            {tab === 'invoice' && (
-              <button
-                onClick={() => setShowScanner(true)}
-                className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-md border border-border text-sm font-medium text-foreground hover:bg-muted transition-colors"
-              >
-                <Scan size={14} /> Scan Bill
-              </button>
-            )}
-            {/* Mobile view toggle */}
-            <div className="flex md:hidden items-center bg-muted rounded-lg p-1 gap-1">
-              <button
-                onClick={() => setMobileView('form')}
-                className={`px-2.5 py-1 rounded-md text-xs font-semibold transition-all ${mobileView === 'form' ? 'bg-card text-foreground shadow-sm' : 'text-muted-foreground'}`}
-              >
-                Form
-              </button>
-              <button
-                onClick={() => setMobileView('preview')}
-                className={`flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-semibold transition-all ${mobileView === 'preview' ? 'bg-card text-foreground shadow-sm' : 'text-muted-foreground'}`}
-              >
-                <Eye size={11} /> Preview
-              </button>
-            </div>
+            <button
+              onClick={handlePrint}
+              disabled={printing}
+              className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-white/25 border border-white/30 text-white text-xs sm:text-sm font-semibold hover:bg-white/40 transition-all disabled:opacity-60"
+            >
+              <Printer size={14} />
+              <span className="hidden sm:inline">Print</span>
+            </button>
             <button
               onClick={handleDownload}
               disabled={downloading}
-              className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 active:scale-95 transition-all disabled:opacity-60 whitespace-nowrap"
+              className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-white/25 border border-white/30 text-white text-xs sm:text-sm font-semibold hover:bg-white/40 transition-all disabled:opacity-60"
             >
               <Download size={14} />
-              <span className="hidden sm:inline">{downloading ? 'Generating...' : 'Download PDF'}</span>
-              <span className="sm:hidden">PDF</span>
+              <span className="hidden sm:inline">PDF</span>
             </button>
           </div>
         </div>
       </header>
 
-      {/* ─── MOBILE TAB BAR ─── */}
-      <div className="md:hidden sticky top-14 z-30 bg-card border-b border-border px-3 py-2 flex items-center gap-2">
+      {/* ─── TAB BAR (mobile/tablet/desktop) ─── */}
+      <div className="sticky top-14 z-30 bg-card border-b border-border px-3 py-2 flex items-center gap-2">
         <div className="flex items-center bg-muted rounded-lg p-1 gap-1 flex-1">
           <button
             onClick={() => setTab('invoice')}
-            className={`flex-1 flex items-center justify-center gap-1 py-1.5 rounded-md text-xs font-semibold transition-all ${tab === 'invoice' ? 'bg-card text-foreground shadow-sm' : 'text-muted-foreground'}`}
+            className={`flex-1 flex items-center justify-center gap-1 py-1.5 rounded-md text-xs sm:text-sm font-semibold transition-all ${tab === 'invoice' ? 'bg-card text-foreground shadow-sm' : 'text-muted-foreground'}`}
           >
             <ReceiptText size={12} /> Invoice
           </button>
           <button
             onClick={() => setTab('challan')}
-            className={`flex-1 flex items-center justify-center gap-1 py-1.5 rounded-md text-xs font-semibold transition-all ${tab === 'challan' ? 'bg-card text-foreground shadow-sm' : 'text-muted-foreground'}`}
+            className={`flex-1 flex items-center justify-center gap-1 py-1.5 rounded-md text-xs sm:text-sm font-semibold transition-all ${tab === 'challan' ? 'bg-card text-foreground shadow-sm' : 'text-muted-foreground'}`}
           >
             <Printer size={12} /> Challan
           </button>
         </div>
-        {tab === 'invoice' && (
-          <button
-            onClick={() => setShowScanner(true)}
-            className="flex items-center gap-1 px-3 py-2 rounded-lg bg-primary/10 text-primary text-xs font-semibold border border-primary/20 hover:bg-primary/20 transition-colors"
-          >
-            <Scan size={13} /> Scan
-          </button>
-        )}
+        {/* AI Scan feature disabled on this release */}
       </div>
 
       {/* ─── MAIN CONTENT ─── */}
@@ -267,7 +296,7 @@ export default function App() {
                 </button>
               </div>
               <div className="flex-1 overflow-auto p-4 bg-muted/30">
-                <div style={{
+                <div className="print-area" style={{
                   transform: `scale(${previewScale()})`,
                   transformOrigin: 'top left',
                   width: '794px',
@@ -338,6 +367,15 @@ export default function App() {
           )}
         </div>
       </div>
+
+      {/* ─── Footer for mobile and desktop ─── */}
+      <footer className="w-full bg-[#0f285d] text-white p-3 text-xs sm:text-sm">
+        <div className="max-w-screen-2xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
+          <div className="font-semibold">Rushiraj Creation</div>
+          <div>Designed for easy invoice & challan printing and PDF export</div>
+          <div>© {new Date().getFullYear()} Rushiraj Creation</div>
+        </div>
+      </footer>
 
       {/* ─── AI Bill Scanner Modal ─── */}
       {showScanner && (

@@ -12,10 +12,10 @@
     --card-foreground: 224 40% 12%;
     --popover: 0 0% 100%;
     --popover-foreground: 224 40% 12%;
-    --primary: 225 73% 34%;
+    --primary: 218 69% 20%; /* strong dark blue */
     --primary-foreground: 0 0% 100%;
-    --secondary: 218 60% 92%;
-    --secondary-foreground: 224 40% 20%;
+    --secondary: 206 96% 93%; /* light blue */
+    --secondary-foreground: 218 70% 24%;
     --muted: 220 14% 94%;
     --muted-foreground: 220 10% 46%;
     --accent: 200 80% 40%;
@@ -56,10 +56,55 @@
 
 /* Print / PDF styles */
 @media print {
-  body * { visibility: hidden; }
-  #invoice-preview, #invoice-preview * { visibility: visible; }
-  #invoice-preview { position: absolute; left: 0; top: 0; width: 100%; }
+  @page {
+    size: A4 portrait;
+    margin: 12mm;
+  }
+
+  body * {
+    visibility: hidden !important;
+    display: none !important;
+  }
+
+  #print-output,
+  #print-output * {
+    visibility: visible !important;
+    display: block !important;
+  }
+
+  #print-output {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 210mm !important;
+    min-height: 297mm !important;
+    box-sizing: border-box !important;
+    page-break-after: always !important;
+    margin: 0 auto !important;
+    padding: 0 !important;
+    background: #fff !important;
+  }
+
+  #pdf-capture-area,
+  .print-area,
+  #invoice-preview,
+  #challan-preview {
+    display: none !important;
+  }
+
+  .no-print,
+  .no-print * {
+    display: none !important;
+  }
+
+  .shadow-2xl,
+  .shadow-sm,
+  .shadow-xl,
+  .shadow-md {
+    box-shadow: none !important;
+  }
 }
+
 
 /* Invoice template exact styles */
 .invoice-table th {
@@ -70,6 +115,53 @@
   padding: 6px 8px;
   border: 1px solid #1a3a6e;
 }
+
+/* Mobile-specific app styling */
+@media (max-width: 768px) {
+  header.sticky {
+    padding: 8px 10px;
+  }
+  header.sticky .max-w-screen-2xl {
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+  .text-muted-foreground,
+  .text-primary-foreground,
+  .text-foreground {
+    font-size: 0.92rem;
+  }
+  .bg-card,
+  .bg-secondary,
+  .bg-muted {
+    background-color: #f8fbff !important;
+  }
+  .min-h-screen {
+    min-height: calc(100vh - 56px - 52px) !important;
+  }
+  .shadow-2xl,
+  .shadow-sm,
+  .shadow-xl,
+  .shadow-md {
+    box-shadow: none !important;
+  }
+  .rounded-xl {
+    border-radius: 0.65rem !important;
+  }
+  .w-full {
+    width: 100% !important;
+  }
+  .max-w-screen-2xl {
+    max-width: 100% !important;
+  }
+  .px-3, .px-4 {
+    padding-left: 0.75rem !important;
+    padding-right: 0.75rem !important;
+  }
+  .p-3, .p-4 {
+    padding: 0.75rem !important;
+  }
+}
+
 
 .invoice-table td {
   font-size: 12px;
