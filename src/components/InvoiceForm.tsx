@@ -84,14 +84,9 @@ export function InvoiceForm({ data, onChange }: Props) {
     <div className="bg-white p-5 rounded-sm shadow-sm border border-gray-200 max-w-xl mx-auto h-full overflow-y-auto" style={{ maxHeight: '90vh' }}>
       
       {/* Form Header */}
-      <div className="flex justify-between items-center mb-6 pb-4 border-b border-gray-200">
-        <div>
-          <h2 className="text-[15px] font-bold text-gray-800">Invoice Details</h2>
-          <p className="text-[11px] text-gray-400 mt-0.5">Fill in the details to generate your invoice</p>
-        </div>
-        <button className="px-3 py-1.5 bg-indigo-50 text-indigo-700 border border-indigo-200 rounded-sm text-[11px] font-bold hover:bg-indigo-100 flex items-center gap-1.5 transition-colors">
-          <Sparkles size={12} className="text-indigo-600" /> AI Scan
-        </button>
+      <div className="mb-6 pb-4 border-b border-gray-200">
+        <h2 className="text-[15px] font-bold text-gray-800">Invoice Details</h2>
+        <p className="text-[11px] text-gray-400 mt-0.5">Fill in the details to generate your invoice</p>
       </div>
 
       <div className="space-y-1">
