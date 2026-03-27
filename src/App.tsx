@@ -6,11 +6,12 @@ import { InvoiceForm } from './components/InvoiceForm';
 import { InvoicePreview } from './components/InvoicePreview';
 import { ChallanForm } from './components/ChallanForm';
 import { ChallanPreview } from './components/ChallanPreview';
+import { BillHistory } from './components/BillHistory';
 import { BillScanner } from './components/BillScanner';
 import type { InvoiceData, ChallanData } from './types/invoice';
 import { defaultInvoiceData, defaultChallanData } from './types/invoice';
 
-type Tab = 'invoice' | 'challan';
+type Tab = 'invoice' | 'challan' | 'history';
 
 export default function App() {
   const [tab, setTab] = useState<Tab>('invoice');
@@ -24,6 +25,7 @@ export default function App() {
   const invoicePdfRef = useRef<HTMLDivElement>(null);
   const challanPdfRef = useRef<HTMLDivElement>(null);
 
+  const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3002';
   const safeInvoiceNumber = invoiceData.invoiceNumber?.trim() || 'draft';
   const safeChallanNumber = challanData.challanNo?.trim() || 'draft';
   const fileName = tab === 'invoice'
@@ -85,53 +87,79 @@ export default function App() {
         }
       }
       pdf.save(fileName);
+
+      // Save to database
+      // Try block for DB disabled as per user request
+      /*
+      try {
+        if (tab === 'invoice') {
+          await fetch(`${API_BASE_URL}/api/invoices`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(invoiceData),
+          });
+        } else {
+          await fetch(`${API_BASE_URL}/api/challans`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(challanData),
+          });
+        }
+      } catch (dbError) {
+        console.error('Failed to save to database:', dbError);
+      }
+      */
     } catch (e) { console.error(e); }
     finally { setDownloading(false); }
   };
 
-  const handlePrint = () => {
+  const handlePrint = async () => {
     if (typeof window === 'undefined') return;
-
-    const source = tab === 'invoice' ? invoicePdfRef.current : challanPdfRef.current;
-    if (!source) return;
-
-    const printWindow = window.open('', '_blank');
-    if (!printWindow) return;
-
-    const html = `
-      <html>
-        <head>
-          <title>${tab === 'invoice' ? 'Invoice' : 'Challan'} - Print</title>
-          <style>
-            @page { size: A4 portrait; margin: 10mm; }
-            html, body { margin: 0; padding: 0; width: 210mm; min-height: 297mm; }
-            body { display: flex; justify-content: center; align-items: start; }
-          </style>
-        </head>
-        <body>
-          ${source.outerHTML}
-        </body>
-      </html>
-    `;
-
-    printWindow.document.open();
-    printWindow.document.write(html);
-    printWindow.document.close();
-
-    printWindow.focus();
+    
     setPrinting(true);
 
-    printWindow.onload = () => {
-      printWindow.print();
-      setTimeout(() => {
-        printWindow.close();
-        setPrinting(false);
-      }, 300);
-    };
+    // Save to database before printing (DISABLED)
+    /*
+    try {
+      if (tab === 'invoice') {
+        await fetch(`${API_BASE_URL}/api/invoices`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(invoiceData),
+        });
+      } else {
+        await fetch(`${API_BASE_URL}/api/challans`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(challanData),
+        });
+      }
+    } catch (dbError) {
+      console.error('Failed to save to database during print:', dbError);
+    }
+    */
+
+    // Trigger native browser print which uses our @media print CSS in index.css
+    window.print();
+    
+    // Slight delay to allow print dialog to open before re-enabling button
+    setTimeout(() => {
+      setPrinting(false);
+    }, 1000);
   };
 
   const handleScannedData = (partial: Partial<InvoiceData>) => {
     setInvoiceData(prev => ({ ...prev, ...partial }));
+  };
+
+  const handleViewBill = (type: 'invoice' | 'challan', data: InvoiceData | ChallanData) => {
+    if (type === 'invoice') {
+      setInvoiceData(data as InvoiceData);
+      setTab('invoice');
+    } else {
+      setChallanData(data as ChallanData);
+      setTab('challan');
+    }
   };
 
   const previewScale = () => {
@@ -239,6 +267,7 @@ export default function App() {
           >
             <Printer size={12} /> Challan
           </button>
+          {/* History tab removed as requested */}
         </div>
         {/* AI Scan feature disabled on this release */}
       </div>
@@ -248,74 +277,94 @@ export default function App() {
 
         {/* ─── DESKTOP: side-by-side ─── */}
         <div className="hidden md:flex gap-5 h-full">
-          {/* Form Panel */}
-          <div className="w-[360px] lg:w-[400px] xl:w-[420px] shrink-0">
-            <div className="bg-card rounded-xl border border-border shadow-sm h-full flex flex-col">
-              <div className="px-4 py-3 border-b border-border bg-secondary/40 flex items-center justify-between shrink-0">
-                <div>
-                  <h2 className="text-sm font-bold text-foreground">
-                    {tab === 'invoice' ? 'Invoice Details' : 'Challan Details'}
-                  </h2>
-                  <p className="text-xs text-muted-foreground mt-0.5">Fill in the details to generate your {tab}</p>
+          {tab === 'history' ? (
+            <div className="flex-1 min-w-0">
+              <div className="bg-card rounded-xl border border-border shadow-sm h-full flex flex-col">
+                <div className="px-4 py-3 border-b border-border bg-secondary/40 flex items-center justify-between shrink-0">
+                  <div>
+                    <h2 className="text-sm font-bold text-foreground">Bill History</h2>
+                    <p className="text-xs text-muted-foreground mt-0.5">View all saved invoices and challans</p>
+                  </div>
                 </div>
-                {tab === 'invoice' && (
-                  <button
-                    onClick={() => setShowScanner(true)}
-                    className="flex items-center gap-1 px-2.5 py-1.5 rounded-md bg-primary/10 text-primary text-xs font-semibold hover:bg-primary/20 transition-colors border border-primary/20"
-                  >
-                    <Scan size={12} /> AI Scan
-                  </button>
-                )}
-              </div>
-              <div className="flex-1 overflow-y-auto p-4">
-                {tab === 'invoice'
-                  ? <InvoiceForm data={invoiceData} onChange={setInvoiceData} />
-                  : <ChallanForm data={challanData} onChange={setChallanData} />
-                }
+                <div className="flex-1 overflow-auto p-4">
+                  <BillHistory onViewBill={handleViewBill} />
+                </div>
               </div>
             </div>
-          </div>
-
-          {/* Preview Panel */}
-          <div className="flex-1 min-w-0">
-            <div className="bg-card rounded-xl border border-border shadow-sm h-full flex flex-col">
-              <div className="px-4 py-3 border-b border-border bg-secondary/40 flex items-center justify-between shrink-0">
-                <div>
-                  <h2 className="text-sm font-bold text-foreground">Live Preview</h2>
-                  <p className="text-xs text-muted-foreground mt-0.5">
-                    {tab === 'invoice' ? `Invoice #${invoiceData.invoiceNumber}` : `Challan #${challanData.challanNo}`} — Updates in real time
-                  </p>
-                </div>
-                <button
-                  onClick={handleDownload}
-                  disabled={downloading}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-primary text-primary-foreground text-xs font-semibold hover:bg-primary/90 active:scale-95 transition-all disabled:opacity-60"
-                >
-                  <Download size={13} />
-                  {downloading ? 'Generating...' : 'Download PDF'}
-                </button>
-              </div>
-              <div className="flex-1 overflow-auto p-4 bg-muted/30">
-                <div className="print-area" style={{
-                  transform: `scale(${previewScale()})`,
-                  transformOrigin: 'top left',
-                  width: '794px',
-                }}>
-                  <div className="shadow-2xl rounded-sm overflow-hidden">
+          ) : (
+            <>
+              {/* Form Panel */}
+              <div className="w-[360px] lg:w-[400px] xl:w-[420px] shrink-0">
+                <div className="bg-card rounded-xl border border-border shadow-sm h-full flex flex-col">
+                  <div className="px-4 py-3 border-b border-border bg-secondary/40 flex items-center justify-between shrink-0">
+                    <div>
+                      <h2 className="text-sm font-bold text-foreground">
+                        {tab === 'invoice' ? 'Invoice Details' : 'Challan Details'}
+                      </h2>
+                      <p className="text-xs text-muted-foreground mt-0.5">Fill in the details to generate your {tab}</p>
+                    </div>
+                  </div>
+                  <div className="flex-1 overflow-y-auto p-4">
                     {tab === 'invoice'
-                      ? <InvoicePreview data={invoiceData} />
-                      : <ChallanPreview data={challanData} />
+                      ? <InvoiceForm data={invoiceData} onChange={setInvoiceData} />
+                      : <ChallanForm data={challanData} onChange={setChallanData} />
                     }
                   </div>
                 </div>
               </div>
-            </div>
-          </div>
+
+              {/* Preview Panel */}
+              <div className="flex-1 min-w-0">
+                <div className="bg-card rounded-xl border border-border shadow-sm h-full flex flex-col">
+                  <div className="px-4 py-3 border-b border-border bg-secondary/40 flex items-center justify-between shrink-0">
+                    <div>
+                      <h2 className="text-sm font-bold text-foreground">Live Preview</h2>
+                      <p className="text-xs text-muted-foreground mt-0.5">
+                        {tab === 'invoice' ? `Invoice #${invoiceData.invoiceNumber}` : `Challan #${challanData.challanNo}`} — Updates in real time
+                      </p>
+                    </div>
+                    <button
+                      onClick={handleDownload}
+                      disabled={downloading}
+                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-primary text-primary-foreground text-xs font-semibold hover:bg-primary/90 active:scale-95 transition-all disabled:opacity-60"
+                    >
+                      <Download size={13} />
+                      {downloading ? 'Generating...' : 'Download PDF'}
+                    </button>
+                  </div>
+                  <div className="flex-1 overflow-auto p-4 bg-muted/30">
+                    <div className="print-area" style={{
+                      transform: `scale(${previewScale()})`,
+                      transformOrigin: 'top left',
+                      width: '794px',
+                    }}>
+                      <div className="shadow-2xl rounded-sm overflow-hidden">
+                        {tab === 'invoice'
+                          ? <InvoicePreview data={invoiceData} />
+                          : <ChallanPreview data={challanData} />
+                        }
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </>
+          )}
         </div>
 
         {/* ─── MOBILE: toggle form/preview ─── */}
         <div className="md:hidden">
-          {mobileView === 'form' ? (
+          {tab === 'history' ? (
+            <div className="bg-card rounded-xl border border-border shadow-sm overflow-hidden">
+              <div className="px-4 py-3 border-b border-border bg-secondary/40">
+                <h2 className="text-sm font-bold text-foreground">Bill History</h2>
+                <p className="text-xs text-muted-foreground mt-0.5">View all saved invoices and challans</p>
+              </div>
+              <div className="overflow-auto p-4">
+                <BillHistory onViewBill={handleViewBill} />
+              </div>
+            </div>
+          ) : mobileView === 'form' ? (
             <div className="bg-card rounded-xl border border-border shadow-sm">
               <div className="p-4">
                 {tab === 'invoice'

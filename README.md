@@ -38,9 +38,27 @@ npm install
 ```bash
 npm run dev
 ```
+Open in browser: http://localhost:5173
 
-👉 Open in browser:  
-http://localhost:5173
+Backend (server + MySQL):
+1
+```bash
+node setup-db.js
+```
+2. 
+```bash
+set PORT=3002 && npm run server   # Windows PowerShell: $env:PORT='3002'; npm run server
+```
+3. यदि फ्रंटेंड अलग पोर्ट पर API call करना है (जैसे 3002):
+   - `.env` 
+   - `VITE_API_URL=http://localhost:3002`
+4. API चेक करें
+```bash
+curl http://localhost:3002/api/invoices
+curl http://localhost:3002/api/challans
+```
+
+👉 अगर `EADDRINUSE` आए तो दूसरे पोर्ट पर चलाएँ, जैसे 3003
 
 ---
 

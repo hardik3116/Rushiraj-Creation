@@ -1,765 +1,281 @@
-// import { useRef } from 'react';
-// import { Plus, Trash2, Upload, X } from 'lucide-react';
-// import type { InvoiceData, InvoiceItem } from '../types/invoice';
-
-// interface Props {
-//   data: InvoiceData;
-//   onChange: (data: InvoiceData) => void;
-// }
-
-// const inputCls = "w-full px-3 py-2 text-sm border border-border rounded-md bg-card text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition-colors";
-// const labelCls = "block text-xs font-semibold text-muted-foreground mb-1 uppercase tracking-wide";
-
-// function ImageUploadField({
-//   label, value, onChange, placeholder
-// }: { label: string; value: string; onChange: (url: string) => void; placeholder?: string }) {
-//   const inputRef = useRef<HTMLInputElement>(null);
-
-//   const handleFile = (file: File) => {
-//     const reader = new FileReader();
-//     reader.onload = (e) => onChange(e.target?.result as string);
-//     reader.readAsDataURL(file);
-//   };
-
-//   return (
-//     <div>
-//       <label className={labelCls}>{label}</label>
-//       {value ? (
-//         <div className="flex items-center gap-3 p-2 rounded-md border border-border bg-muted/20">
-//           <img src={value} alt={label} className="h-10 w-auto object-contain rounded border border-border bg-white p-0.5" />
-//           <span className="text-xs text-muted-foreground flex-1 truncate">{label} uploaded</span>
-//           <button onClick={() => onChange('')} className="p-1 rounded hover:bg-destructive/10 text-destructive transition-colors">
-//             <X size={13} />
-//           </button>
-//         </div>
-//       ) : (
-//         <>
-//           <input
-//             ref={inputRef}
-//             type="file"
-//             accept="image/*"
-//             className="hidden"
-//             onChange={e => { if (e.target.files?.[0]) handleFile(e.target.files[0]); }}
-//           />
-//           <button
-//             onClick={() => inputRef.current?.click()}
-//             className="w-full flex items-center gap-2 px-3 py-2 rounded-md border border-dashed border-muted-foreground/30 text-sm text-muted-foreground hover:bg-muted/30 hover:border-primary/40 transition-colors"
-//           >
-//             <Upload size={14} />
-//             {placeholder || `Upload ${label}`}
-//           </button>
-//         </>
-//       )}
-//     </div>
-//   );
-// }
-
-// export function InvoiceForm({ data, onChange }: Props) {
-//   const set = (field: keyof InvoiceData, value: unknown) => {
-//     onChange({ ...data, [field]: value });
-//   };
-
-//   const setItem = (id: string, field: keyof InvoiceItem, value: unknown) => {
-//     onChange({
-//       ...data,
-//       items: data.items.map((item) =>
-//         item.id === id ? { ...item, [field]: value } : item
-//       ),
-//     });
-//   };
-
-//   const addItem = () => {
-//     const newItem: InvoiceItem = {
-//       id: Date.now().toString(),
-//       name: '',
-//       pchNo: '',
-//       hsnSac: '',
-//       qty: 0,
-//       unit: 'Pcs',
-//       rate: 0,
-//       discount: 5,
-//       discountType: 'percent',
-//       taxRate: 5,
-//     };
-//     onChange({ ...data, items: [...data.items, newItem] });
-//   };
-
-//   const removeItem = (id: string) => {
-//     if (data.items.length <= 1) return;
-//     onChange({ ...data, items: data.items.filter((i) => i.id !== id) });
-//   };
-
-//   return (
-//     <div className="space-y-6">
-//       {/* Company Info */}
-//       <section>
-//         <h3 className="text-sm font-bold text-foreground mb-3 pb-2 border-b border-border flex items-center gap-2">
-//           <span className="w-5 h-5 rounded-full bg-primary text-primary-foreground text-xs flex items-center justify-center">1</span>
-//           Company (From)
-//         </h3>
-//         <div className="grid grid-cols-2 gap-3">
-//           <div className="col-span-2">
-//             <label className={labelCls}>Company Name</label>
-//             <input className={inputCls} value={data.companyName} onChange={e => set('companyName', e.target.value)} placeholder="Your Company Name" />
-//           </div>
-//           <div className="col-span-2">
-//             <ImageUploadField
-//               label="Company Logo"
-//               value={data.companyLogoUrl}
-//               onChange={url => set('companyLogoUrl', url)}
-//               placeholder="Upload Company Logo (PNG/JPG)"
-//             />
-//           </div>
-//           <div className="col-span-2">
-//             <label className={labelCls}>Address</label>
-//             <input className={inputCls} value={data.companyAddress} onChange={e => set('companyAddress', e.target.value)} placeholder="Street address" />
-//           </div>
-//           <div>
-//             <label className={labelCls}>City</label>
-//             <input className={inputCls} value={data.companyCity} onChange={e => set('companyCity', e.target.value)} />
-//           </div>
-//           <div>
-//             <label className={labelCls}>State</label>
-//             <input className={inputCls} value={data.companyState} onChange={e => set('companyState', e.target.value)} />
-//           </div>
-//           <div>
-//             <label className={labelCls}>Pincode</label>
-//             <input className={inputCls} value={data.companyPincode} onChange={e => set('companyPincode', e.target.value)} />
-//           </div>
-//           <div>
-//             <label className={labelCls}>Phone</label>
-//             <input className={inputCls} value={data.companyPhone} onChange={e => set('companyPhone', e.target.value)} />
-//           </div>
-//           <div>
-//             <label className={labelCls}>GSTIN</label>
-//             <input className={inputCls} value={data.companyGstin} onChange={e => set('companyGstin', e.target.value)} />
-//           </div>
-//           <div>
-//             <label className={labelCls}>PAN</label>
-//             <input className={inputCls} value={data.companyPan} onChange={e => set('companyPan', e.target.value)} />
-//           </div>
-//         </div>
-//       </section>
-
-//       {/* Invoice Details */}
-//       <section>
-//         <h3 className="text-sm font-bold text-foreground mb-3 pb-2 border-b border-border flex items-center gap-2">
-//           <span className="w-5 h-5 rounded-full bg-primary text-primary-foreground text-xs flex items-center justify-center">2</span>
-//           Invoice Details
-//         </h3>
-//         <div className="grid grid-cols-2 gap-3">
-//           <div>
-//             <label className={labelCls}>Invoice No.</label>
-//             <input className={inputCls} value={data.invoiceNumber} onChange={e => set('invoiceNumber', e.target.value)} placeholder="AE-001" />
-//           </div>
-//           <div>
-//             <label className={labelCls}>Invoice Date</label>
-//             <input type="date" className={inputCls} value={data.invoiceDate} onChange={e => set('invoiceDate', e.target.value)} />
-//           </div>
-//         </div>
-//         <div className="mt-3 flex items-center gap-2">
-//           <label className="flex items-center gap-2 cursor-pointer">
-//             <input
-//               type="checkbox"
-//               checked={data.igst}
-//               onChange={e => set('igst', e.target.checked)}
-//               className="w-4 h-4 rounded accent-primary"
-//             />
-//             <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Use IGST (Inter-State)</span>
-//           </label>
-//         </div>
-//       </section>
-
-//       {/* Bill To */}
-//       <section>
-//         <h3 className="text-sm font-bold text-foreground mb-3 pb-2 border-b border-border flex items-center gap-2">
-//           <span className="w-5 h-5 rounded-full bg-primary text-primary-foreground text-xs flex items-center justify-center">3</span>
-//           Bill To (Client)
-//         </h3>
-//         <div className="grid grid-cols-2 gap-3">
-//           <div className="col-span-2">
-//             <label className={labelCls}>Client Name</label>
-//             <input className={inputCls} value={data.clientName} onChange={e => set('clientName', e.target.value)} />
-//           </div>
-//           <div className="col-span-2">
-//             <label className={labelCls}>Address</label>
-//             <input className={inputCls} value={data.clientAddress} onChange={e => set('clientAddress', e.target.value)} />
-//           </div>
-//           <div>
-//             <label className={labelCls}>City</label>
-//             <input className={inputCls} value={data.clientCity} onChange={e => set('clientCity', e.target.value)} />
-//           </div>
-//           <div>
-//             <label className={labelCls}>State</label>
-//             <input className={inputCls} value={data.clientState} onChange={e => set('clientState', e.target.value)} />
-//           </div>
-//           <div>
-//             <label className={labelCls}>Pincode</label>
-//             <input className={inputCls} value={data.clientPincode} onChange={e => set('clientPincode', e.target.value)} />
-//           </div>
-//           <div>
-//             <label className={labelCls}>Phone</label>
-//             <input className={inputCls} value={data.clientPhone} onChange={e => set('clientPhone', e.target.value)} />
-//           </div>
-//           <div>
-//             <label className={labelCls}>GSTIN</label>
-//             <input className={inputCls} value={data.clientGstin} onChange={e => set('clientGstin', e.target.value)} />
-//           </div>
-//           <div>
-//             <label className={labelCls}>PAN</label>
-//             <input className={inputCls} value={data.clientPan} onChange={e => set('clientPan', e.target.value)} />
-//           </div>
-//         </div>
-//       </section>
-
-//       {/* Items */}
-//       <section>
-//         <h3 className="text-sm font-bold text-foreground mb-3 pb-2 border-b border-border flex items-center gap-2">
-//           <span className="w-5 h-5 rounded-full bg-primary text-primary-foreground text-xs flex items-center justify-center">4</span>
-//           Items / Products
-//         </h3>
-//         <div className="space-y-3">
-//           {data.items.map((item, idx) => (
-//             <div key={item.id} className="bg-secondary/40 rounded-lg p-3 border border-border">
-//               <div className="flex items-center justify-between mb-2">
-//                 <span className="text-xs font-bold text-muted-foreground">Item #{idx + 1}</span>
-//                 <button
-//                   onClick={() => removeItem(item.id)}
-//                   className="text-destructive hover:bg-destructive/10 p-1 rounded transition-colors"
-//                   disabled={data.items.length <= 1}
-//                 >
-//                   <Trash2 size={14} />
-//                 </button>
-//               </div>
-//               <div className="grid grid-cols-2 gap-2">
-//                 <div className="col-span-2">
-//                   <label className={labelCls}>Item Name</label>
-//                   <input className={inputCls} value={item.name} onChange={e => setItem(item.id, 'name', e.target.value)} placeholder="e.g. DIGITAL" />
-//                 </div>
-//                 <div>
-//                   <label className={labelCls}>P.CH No.</label>
-//                   <input className={inputCls} value={item.pchNo} onChange={e => setItem(item.id, 'pchNo', e.target.value)} placeholder="P CH NO:76" />
-//                 </div>
-//                 <div>
-//                   <label className={labelCls}>Unit</label>
-//                   <select className={inputCls} value={item.unit} onChange={e => setItem(item.id, 'unit', e.target.value)}>
-//                     <option>Pcs</option>
-//                     <option>Mtrs</option>
-//                     <option>Kg</option>
-//                     <option>Box</option>
-//                     <option>Nos</option>
-//                   </select>
-//                 </div>
-//                 <div>
-//                   <label className={labelCls}>Quantity</label>
-//                   <input type="number" className={inputCls} value={item.qty} onChange={e => setItem(item.id, 'qty', parseFloat(e.target.value) || 0)} />
-//                 </div>
-//                 <div>
-//                   <label className={labelCls}>Rate (₹)</label>
-//                   <input type="number" className={inputCls} value={item.rate} onChange={e => setItem(item.id, 'rate', parseFloat(e.target.value) || 0)} />
-//                 </div>
-//                 <div>
-//                   <label className={labelCls}>Discount %</label>
-//                   <input type="number" className={inputCls} value={item.discount} onChange={e => setItem(item.id, 'discount', parseFloat(e.target.value) || 0)} />
-//                 </div>
-//                 <div>
-//                   <label className={labelCls}>Tax %</label>
-//                   <select className={inputCls} value={item.taxRate} onChange={e => setItem(item.id, 'taxRate', parseFloat(e.target.value))}>
-//                     <option value={0}>0%</option>
-//                     <option value={5}>5%</option>
-//                     <option value={12}>12%</option>
-//                     <option value={18}>18%</option>
-//                     <option value={28}>28%</option>
-//                   </select>
-//                 </div>
-//               </div>
-//             </div>
-//           ))}
-//         </div>
-//         <button
-//           onClick={addItem}
-//           className="mt-3 w-full flex items-center justify-center gap-2 py-2 rounded-md border-2 border-dashed border-primary/40 text-primary text-sm font-semibold hover:bg-primary/5 transition-colors"
-//         >
-//           <Plus size={16} /> Add Item
-//         </button>
-//       </section>
-
-//       {/* Bank Details */}
-//       <section>
-//         <h3 className="text-sm font-bold text-foreground mb-3 pb-2 border-b border-border flex items-center gap-2">
-//           <span className="w-5 h-5 rounded-full bg-primary text-primary-foreground text-xs flex items-center justify-center">5</span>
-//           Bank Details
-//         </h3>
-//         <div className="grid grid-cols-1 gap-3">
-//           <div>
-//             <label className={labelCls}>Bank Name</label>
-//             <input className={inputCls} value={data.bank.bankName} onChange={e => set('bank', { ...data.bank, bankName: e.target.value })} />
-//           </div>
-//           <div>
-//             <label className={labelCls}>Account Number</label>
-//             <input className={inputCls} value={data.bank.accountNumber} onChange={e => set('bank', { ...data.bank, accountNumber: e.target.value })} />
-//           </div>
-//           <div>
-//             <label className={labelCls}>IFSC Code</label>
-//             <input className={inputCls} value={data.bank.ifscCode} onChange={e => set('bank', { ...data.bank, ifscCode: e.target.value })} />
-//           </div>
-//         </div>
-//       </section>
-
-//       {/* Signature */}
-//       <section>
-//         <h3 className="text-sm font-bold text-foreground mb-3 pb-2 border-b border-border flex items-center gap-2">
-//           <span className="w-5 h-5 rounded-full bg-primary text-primary-foreground text-xs flex items-center justify-center">6</span>
-//           Authorised Signature
-//         </h3>
-//         <ImageUploadField
-//           label="Signature"
-//           value={data.signatureUrl}
-//           onChange={url => set('signatureUrl', url)}
-//           placeholder="Upload Signature Image"
-//         />
-//       </section>
-
-//       {/* Terms */}
-//       <section>
-//         <h3 className="text-sm font-bold text-foreground mb-3 pb-2 border-b border-border flex items-center gap-2">
-//           <span className="w-5 h-5 rounded-full bg-primary text-primary-foreground text-xs flex items-center justify-center">7</span>
-//           Terms &amp; Conditions
-//         </h3>
-//         <div className="space-y-2">
-//           {data.terms.map((term, i) => (
-//             <div key={i} className="flex gap-2">
-//               <span className="text-xs text-muted-foreground mt-2 w-4 shrink-0">({i + 1})</span>
-//               <input
-//                 className={inputCls}
-//                 value={term}
-//                 onChange={e => {
-//                   const terms = [...data.terms];
-//                   terms[i] = e.target.value;
-//                   set('terms', terms);
-//                 }}
-//               />
-//               <button
-//                 onClick={() => set('terms', data.terms.filter((_, j) => j !== i))}
-//                 className="text-destructive hover:bg-destructive/10 p-1 rounded transition-colors mt-1"
-//               >
-//                 <Trash2 size={13} />
-//               </button>
-//             </div>
-//           ))}
-//           <button
-//             onClick={() => set('terms', [...data.terms, ''])}
-//             className="w-full flex items-center justify-center gap-2 py-2 rounded-md border border-dashed border-muted-foreground/30 text-muted-foreground text-xs hover:bg-muted/50 transition-colors"
-//           >
-//             <Plus size={13} /> Add Term
-//           </button>
-//         </div>
-//       </section>
-//     </div>
-//   );
-// }
-
-import { useRef } from 'react';
-import { Plus, Trash2, Upload, X } from 'lucide-react';
-import type { InvoiceData, InvoiceItem, PaidDetails } from '../types/invoice';
+import { useRef, useState } from 'react';
+import { Plus, Trash2, Upload, Sparkles } from 'lucide-react';
+import type { InvoiceData, InvoiceItem } from '../types/invoice';
 
 interface Props {
   data: InvoiceData;
   onChange: (data: InvoiceData) => void;
 }
 
-const inputCls = "w-full px-3 py-2 text-sm border border-border rounded-md bg-card text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition-colors";
-const labelCls = "block text-xs font-semibold text-muted-foreground mb-1 uppercase tracking-wide";
+const inputCls = 'w-full px-3 py-1.5 text-xs border border-gray-300 rounded-sm bg-white text-gray-800 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors placeholder:text-gray-400';
+const labelCls = 'block text-[10px] font-bold text-gray-500 mb-1 uppercase tracking-widest';
 
-function ImageUploadField({
-  label, value, onChange, placeholder
-}: { label: string; value: string; onChange: (url: string) => void; placeholder?: string }) {
-  const inputRef = useRef<HTMLInputElement>(null);
+function getNextItemId() {
+  return Date.now().toString();
+}
 
-  const handleFile = (file: File) => {
-    const reader = new FileReader();
-    reader.onload = (e) => onChange(e.target?.result as string);
-    reader.readAsDataURL(file);
-  };
-
+function Section({ title, num, children }: { title: string, num: number, children: React.ReactNode }) {
+  const [isOpen, setIsOpen] = useState(true);
   return (
-    <div className="w-full">
-      <label className={labelCls}>{label}</label>
-      {value ? (
-        <div className="flex items-center gap-3 p-2 rounded-md border border-border bg-muted/20 w-full">
-          <img src={value} alt={label} className="h-10 w-auto object-contain rounded border border-border bg-white p-0.5" />
-          <span className="text-xs text-muted-foreground flex-1 truncate">{label} uploaded</span>
-          <button onClick={() => onChange('')} className="p-1 rounded hover:bg-destructive/10 text-destructive transition-colors">
-            <X size={13} />
-          </button>
+    <div className="border-b border-gray-200 pb-5 mb-5 last:border-0 last:pb-0 last:mb-0">
+      <div 
+        className="flex items-center gap-3 cursor-pointer mb-4 select-none hover:opacity-80 transition-opacity"
+        onClick={() => setIsOpen(!isOpen)}
+      >
+        <div className="w-5 h-5 rounded-full bg-[#1e293b] text-white flex items-center justify-center text-[10px] font-bold shrink-0">
+          {num}
         </div>
-      ) : (
-        <>
-          <input
-            ref={inputRef}
-            type="file"
-            accept="image/*"
-            className="hidden"
-            onChange={e => { if (e.target.files?.[0]) handleFile(e.target.files[0]); }}
-          />
-          <button
-            onClick={() => inputRef.current?.click()}
-            className="w-full flex items-center gap-2 px-3 py-2 rounded-md border border-dashed border-muted-foreground/30 text-sm text-muted-foreground hover:bg-muted/30 hover:border-primary/40 transition-colors"
-          >
-            <Upload size={14} />
-            {placeholder || `Upload ${label}`}
-          </button>
-        </>
-      )}
+        <h3 className="text-[13px] font-bold text-[#1e293b] flex-1">{title}</h3>
+      </div>
+      {isOpen && <div className="space-y-4 pl-1">{children}</div>}
     </div>
   );
 }
 
 export function InvoiceForm({ data, onChange }: Props) {
-  const set = (field: keyof InvoiceData, value: unknown) => {
-    onChange({ ...data, [field]: value });
-  };
+  const set = (field: keyof InvoiceData, value: unknown) => onChange({ ...data, [field]: value });
+  
+  const setBank = (field: string, value: string) => onChange({ ...data, bank: { ...data.bank, [field]: value } });
+  const setPaid = (field: string, value: string) => onChange({ ...data, paidDetails: { ...data.paidDetails, [field]: value } });
 
-  const setItem = (id: string, field: keyof InvoiceItem, value: unknown) => {
+  const setItem = (id: string, updates: Partial<InvoiceItem>) => {
     onChange({
       ...data,
-      items: data.items.map((item) =>
-        item.id === id ? { ...item, [field]: value } : item
-      ),
+      items: data.items.map((item) => (item.id === id ? { ...item, ...updates } : item)),
     });
   };
 
-  const setPaid = (field: keyof PaidDetails, value: string) => {
-    onChange({ ...data, paidDetails: { ...data.paidDetails, [field]: value } });
-  };
-
   const addItem = () => {
-    const newItem: InvoiceItem = {
-      id: Date.now().toString(),
-      name: '',
-      pchNo: '',
-      hsnSac: '',
-      qty: 0,
-      unit: 'Pcs',
-      rate: 0,
-      discount: 5,
-      discountType: 'percent',
-      taxRate: 5,
-    };
-    onChange({ ...data, items: [...data.items, newItem] });
+    onChange({
+      ...data,
+      items: [
+        ...data.items,
+        {
+          id: getNextItemId(),
+          name: '',
+          pchNo: '',
+          hsnSac: '',
+          qty: 0,
+          unit: 'Pcs',
+          rate: 0,
+          discount: 0,
+          discountType: 'percent',
+          taxRate: 5,
+        },
+      ],
+    });
   };
 
   const removeItem = (id: string) => {
     if (data.items.length <= 1) return;
-    onChange({ ...data, items: data.items.filter((i) => i.id !== id) });
+    onChange({ ...data, items: data.items.filter((item) => item.id !== id) });
   };
 
+  const updateTerm = (index: number, value: string) => {
+    const newTerms = [...data.terms];
+    newTerms[index] = value;
+    set('terms', newTerms);
+  };
+  
+  const addTerm = () => set('terms', [...data.terms, '']);
+  const removeTerm = (index: number) => set('terms', data.terms.filter((_, i) => i !== index));
+
   return (
-    <div className="space-y-6">
-      {/* Company Info */}
-      <section>
-        <h3 className="text-sm font-bold text-foreground mb-3 pb-2 border-b border-border flex items-center gap-2">
-          <span className="w-5 h-5 rounded-full bg-primary text-primary-foreground text-xs flex items-center justify-center">1</span>
-          Company (From)
-        </h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-          <div className="col-span-2">
-            <label className={labelCls}>Company Name</label>
-            <input className={inputCls} value={data.companyName} onChange={e => set('companyName', e.target.value)} placeholder="Your Company Name" />
-          </div>
-          <div className="col-span-1 md:col-span-1">
-            <ImageUploadField
-              label="Logo (Left)"
-              value={data.companyLogoLeftUrl}
-              onChange={url => set('companyLogoLeftUrl', url)}
-              placeholder="Upload Left Logo"
-            />
-          </div>
-          <div className="col-span-1 md:col-span-1">
-            <ImageUploadField
-              label="Logo (Right)"
-              value={data.companyLogoRightUrl}
-              onChange={url => set('companyLogoRightUrl', url)}
-              placeholder="Upload Right Logo"
-            />
-          </div>
-          <div className="col-span-2">
-            <label className={labelCls}>Address</label>
-            <input className={inputCls} value={data.companyAddress} onChange={e => set('companyAddress', e.target.value)} placeholder="Street address" />
-          </div>
-          <div>
-            <label className={labelCls}>City</label>
-            <input className={inputCls} value={data.companyCity} onChange={e => set('companyCity', e.target.value)} />
-          </div>
-          <div>
-            <label className={labelCls}>State</label>
-            <input className={inputCls} value={data.companyState} onChange={e => set('companyState', e.target.value)} />
-          </div>
-          <div>
-            <label className={labelCls}>Pincode</label>
-            <input className={inputCls} value={data.companyPincode} onChange={e => set('companyPincode', e.target.value)} />
-          </div>
-          <div>
-            <label className={labelCls}>Phone</label>
-            <input className={inputCls} value={data.companyPhone} onChange={e => set('companyPhone', e.target.value)} />
-          </div>
-          <div>
-            <label className={labelCls}>GSTIN</label>
-            <input className={inputCls} value={data.companyGstin} onChange={e => set('companyGstin', e.target.value)} />
-          </div>
-          <div>
-            <label className={labelCls}>PAN</label>
-            <input className={inputCls} value={data.companyPan} onChange={e => set('companyPan', e.target.value)} />
-          </div>
+    <div className="bg-white p-5 rounded-sm shadow-sm border border-gray-200 max-w-xl mx-auto h-full overflow-y-auto" style={{ maxHeight: '90vh' }}>
+      
+      {/* Form Header */}
+      <div className="flex justify-between items-center mb-6 pb-4 border-b border-gray-200">
+        <div>
+          <h2 className="text-[15px] font-bold text-gray-800">Invoice Details</h2>
+          <p className="text-[11px] text-gray-400 mt-0.5">Fill in the details to generate your invoice</p>
         </div>
-      </section>
-
-      {/* Invoice Details */}
-      <section>
-        <h3 className="text-sm font-bold text-foreground mb-3 pb-2 border-b border-border flex items-center gap-2">
-          <span className="w-5 h-5 rounded-full bg-primary text-primary-foreground text-xs flex items-center justify-center">2</span>
-          Invoice Details
-        </h3>
-        <div className="grid grid-cols-2 gap-3">
-          <div>
-            <label className={labelCls}>Bill No.</label>
-            <input className={inputCls} value={data.invoiceNumber} onChange={e => set('invoiceNumber', e.target.value)} placeholder="AE-001" />
-          </div>
-          <div>
-            <label className={labelCls}>Bill Date</label>
-            <input type="date" className={inputCls} value={data.invoiceDate} onChange={e => set('invoiceDate', e.target.value)} />
-          </div>
-        </div>
-        <div className="mt-3 flex items-center gap-2">
-          <label className="flex items-center gap-2 cursor-pointer">
-            <input
-              type="checkbox"
-              checked={data.igst}
-              onChange={e => set('igst', e.target.checked)}
-              className="w-4 h-4 rounded accent-primary"
-            />
-            <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Use IGST (Inter-State)</span>
-          </label>
-        </div>
-      </section>
-
-      {/* Bill To */}
-      <section>
-        <h3 className="text-sm font-bold text-foreground mb-3 pb-2 border-b border-border flex items-center gap-2">
-          <span className="w-5 h-5 rounded-full bg-primary text-primary-foreground text-xs flex items-center justify-center">3</span>
-          Bill To (Client)
-        </h3>
-        <div className="grid grid-cols-2 gap-3">
-          <div className="col-span-2">
-            <label className={labelCls}>Client Name</label>
-            <input className={inputCls} value={data.clientName} onChange={e => set('clientName', e.target.value)} />
-          </div>
-          <div className="col-span-2">
-            <label className={labelCls}>Address</label>
-            <input className={inputCls} value={data.clientAddress} onChange={e => set('clientAddress', e.target.value)} />
-          </div>
-          <div>
-            <label className={labelCls}>City</label>
-            <input className={inputCls} value={data.clientCity} onChange={e => set('clientCity', e.target.value)} />
-          </div>
-          <div>
-            <label className={labelCls}>State</label>
-            <input className={inputCls} value={data.clientState} onChange={e => set('clientState', e.target.value)} />
-          </div>
-          <div>
-            <label className={labelCls}>Pincode</label>
-            <input className={inputCls} value={data.clientPincode} onChange={e => set('clientPincode', e.target.value)} />
-          </div>
-          <div>
-            <label className={labelCls}>Phone</label>
-            <input className={inputCls} value={data.clientPhone} onChange={e => set('clientPhone', e.target.value)} />
-          </div>
-          <div>
-            <label className={labelCls}>GSTIN</label>
-            <input className={inputCls} value={data.clientGstin} onChange={e => set('clientGstin', e.target.value)} />
-          </div>
-          <div>
-            <label className={labelCls}>PAN</label>
-            <input className={inputCls} value={data.clientPan} onChange={e => set('clientPan', e.target.value)} />
-          </div>
-        </div>
-      </section>
-
-      {/* Items */}
-      <section>
-        <h3 className="text-sm font-bold text-foreground mb-3 pb-2 border-b border-border flex items-center gap-2">
-          <span className="w-5 h-5 rounded-full bg-primary text-primary-foreground text-xs flex items-center justify-center">4</span>
-          Items / Products
-        </h3>
-        <div className="space-y-3">
-          {data.items.map((item, idx) => (
-            <div key={item.id} className="bg-secondary/40 rounded-lg p-3 border border-border">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-xs font-bold text-muted-foreground">Item #{idx + 1}</span>
-                <button
-                  onClick={() => removeItem(item.id)}
-                  className="text-destructive hover:bg-destructive/10 p-1 rounded transition-colors"
-                  disabled={data.items.length <= 1}
-                >
-                  <Trash2 size={14} />
-                </button>
-              </div>
-              <div className="grid grid-cols-2 gap-2">
-                <div className="col-span-2">
-                  <label className={labelCls}>Description of Goods</label>
-                  <input className={inputCls} value={item.name} onChange={e => setItem(item.id, 'name', e.target.value)} placeholder="e.g. Sarees Job Work" />
-                </div>
-                <div>
-                  <label className={labelCls}>P.Ch.No.</label>
-                  <input className={inputCls} value={item.pchNo} onChange={e => setItem(item.id, 'pchNo', e.target.value)} placeholder="1090" />
-                </div>
-                <div>
-                  <label className={labelCls}>HSN</label>
-                  <input className={inputCls} value={item.hsnSac} onChange={e => setItem(item.id, 'hsnSac', e.target.value)} placeholder="540752" />
-                </div>
-                <div>
-                  <label className={labelCls}>Quantity</label>
-                  <input type="number" className={inputCls} value={item.qty || ''} onChange={e => setItem(item.id, 'qty', parseFloat(e.target.value) || 0)} />
-                </div>
-                <div>
-                  <label className={labelCls}>Rate (₹)</label>
-                  <input type="number" className={inputCls} value={item.rate || ''} onChange={e => setItem(item.id, 'rate', parseFloat(e.target.value) || 0)} />
-                </div>
-                <div>
-                  <label className={labelCls}>Discount %</label>
-                  <input type="number" className={inputCls} value={item.discount || ''} onChange={e => setItem(item.id, 'discount', parseFloat(e.target.value) || 0)} />
-                </div>
-                <div>
-                  <label className={labelCls}>Tax %</label>
-                  <select className={inputCls} value={item.taxRate} onChange={e => setItem(item.id, 'taxRate', parseFloat(e.target.value))}>
-                    <option value={0}>0%</option>
-                    <option value={5}>5%</option>
-                    <option value={12}>12%</option>
-                    <option value={18}>18%</option>
-                    <option value={28}>28%</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-        <button
-          onClick={addItem}
-          className="mt-3 w-full flex items-center justify-center gap-2 py-2 rounded-md border-2 border-dashed border-primary/40 text-primary text-sm font-semibold hover:bg-primary/5 transition-colors"
-        >
-          <Plus size={16} /> Add Item
+        <button className="px-3 py-1.5 bg-indigo-50 text-indigo-700 border border-indigo-200 rounded-sm text-[11px] font-bold hover:bg-indigo-100 flex items-center gap-1.5 transition-colors">
+          <Sparkles size={12} className="text-indigo-600" /> AI Scan
         </button>
-      </section>
+      </div>
 
-      {/* Paid Details */}
-      <section>
-        <h3 className="text-sm font-bold text-foreground mb-3 pb-2 border-b border-border flex items-center gap-2">
-          <span className="w-5 h-5 rounded-full bg-primary text-primary-foreground text-xs flex items-center justify-center">5</span>
-          Paid Details
-        </h3>
-        <div className="grid grid-cols-2 gap-3">
+      <div className="space-y-1">
+        
+        {/* 1. Company (From) */}
+        <Section num={1} title="Company (From)">
           <div>
-            <label className={labelCls}>Amount</label>
-            <input className={inputCls} value={data.paidDetails.amount} onChange={e => setPaid('amount', e.target.value)} placeholder="e.g. 20000" />
+            <label className={labelCls}>Company Name</label>
+            <input className={inputCls} placeholder="RUSHIRAJ CREATION" value={data.companyName} onChange={e => set('companyName', e.target.value)} />
           </div>
-          <div>
-            <label className={labelCls}>Cheque No.</label>
-            <input className={inputCls} value={data.paidDetails.chequeNo} onChange={e => setPaid('chequeNo', e.target.value)} placeholder="Cheque number" />
-          </div>
-          <div>
-            <label className={labelCls}>Bank</label>
-            <input className={inputCls} value={data.paidDetails.bank} onChange={e => setPaid('bank', e.target.value)} placeholder="Bank name" />
-          </div>
-          <div>
-            <label className={labelCls}>Date</label>
-            <input type="date" className={inputCls} value={data.paidDetails.date} onChange={e => setPaid('date', e.target.value)} />
-          </div>
-          <div className="col-span-2">
-            <label className={labelCls}>Total Amount in Words (blank = auto)</label>
-            <input className={inputCls} value={data.paidDetails.totalAmountInWords} onChange={e => setPaid('totalAmountInWords', e.target.value)} placeholder="Leave blank to auto-calculate" />
-          </div>
-          <div>
-            <label className={labelCls}>TDS</label>
-            <input className={inputCls} value={data.paidDetails.tds} onChange={e => setPaid('tds', e.target.value)} placeholder="TDS amount" />
-          </div>
-          <div>
-            <label className={labelCls}>Total Pay Rs.</label>
-            <input className={inputCls} value={data.paidDetails.totalPayRs} onChange={e => setPaid('totalPayRs', e.target.value)} placeholder="Final payable" />
-          </div>
-        </div>
-      </section>
 
-      {/* Bank Details */}
-      <section>
-        <h3 className="text-sm font-bold text-foreground mb-3 pb-2 border-b border-border flex items-center gap-2">
-          <span className="w-5 h-5 rounded-full bg-primary text-primary-foreground text-xs flex items-center justify-center">6</span>
-          Bank Details
-        </h3>
-        <div className="grid grid-cols-1 gap-3">
           <div>
-            <label className={labelCls}>Bank Name</label>
-            <input className={inputCls} value={data.bank.bankName} onChange={e => set('bank', { ...data.bank, bankName: e.target.value })} />
+            <label className={labelCls}>Address</label>
+            <input className={inputCls} placeholder="E-196, Matrushakti Society..." value={data.companyAddress} onChange={e => set('companyAddress', e.target.value)} />
           </div>
-          <div>
-            <label className={labelCls}>Account Number</label>
-            <input className={inputCls} value={data.bank.accountNumber} onChange={e => set('bank', { ...data.bank, accountNumber: e.target.value })} />
-          </div>
-          <div>
-            <label className={labelCls}>IFSC Code</label>
-            <input className={inputCls} value={data.bank.ifscCode} onChange={e => set('bank', { ...data.bank, ifscCode: e.target.value })} />
-          </div>
-        </div>
-      </section>
 
-      {/* Signature */}
-      <section>
-        <h3 className="text-sm font-bold text-foreground mb-3 pb-2 border-b border-border flex items-center gap-2">
-          <span className="w-5 h-5 rounded-full bg-primary text-primary-foreground text-xs flex items-center justify-center">7</span>
-          Authorised Signature
-        </h3>
-        <ImageUploadField
-          label="Signature"
-          value={data.signatureUrl}
-          onChange={url => set('signatureUrl', url)}
-          placeholder="Upload Signature Image"
-        />
-      </section>
+          <div className="grid grid-cols-2 gap-x-4 gap-y-3">
+            <div><label className={labelCls}>City</label><input className={inputCls} placeholder="Surat" value={data.companyCity} onChange={e => set('companyCity', e.target.value)} /></div>
+            <div><label className={labelCls}>State</label><input className={inputCls} placeholder="Gujarat" value={data.companyState} onChange={e => set('companyState', e.target.value)} /></div>
+            <div><label className={labelCls}>Pincode</label><input className={inputCls} placeholder="395006" value={data.companyPincode} onChange={e => set('companyPincode', e.target.value)} /></div>
+            <div><label className={labelCls}>Phone</label><input className={inputCls} placeholder="96246 57000" value={data.companyPhone} onChange={e => set('companyPhone', e.target.value)} /></div>
+            <div><label className={labelCls}>GSTIN</label><input className={inputCls} placeholder="24AQPPD..." value={data.companyGstin} onChange={e => set('companyGstin', e.target.value)} /></div>
+            <div><label className={labelCls}>PAN</label><input className={inputCls} placeholder="AQPPD..." value={data.companyPan} onChange={e => set('companyPan', e.target.value)} /></div>
+          </div>
+        </Section>
 
-      {/* Terms */}
-      <section>
-        <h3 className="text-sm font-bold text-foreground mb-3 pb-2 border-b border-border flex items-center gap-2">
-          <span className="w-5 h-5 rounded-full bg-primary text-primary-foreground text-xs flex items-center justify-center">8</span>
-          Terms &amp; Conditions
-        </h3>
-        <div className="space-y-2">
-          {data.terms.map((term, i) => (
-            <div key={i} className="flex gap-2">
-              <span className="text-xs text-muted-foreground mt-2 w-4 shrink-0">({i + 1})</span>
-              <input
-                className={inputCls}
-                value={term}
-                onChange={e => {
-                  const terms = [...data.terms];
-                  terms[i] = e.target.value;
-                  set('terms', terms);
-                }}
-              />
-              <button
-                onClick={() => set('terms', data.terms.filter((_, j) => j !== i))}
-                className="text-destructive hover:bg-destructive/10 p-1 rounded transition-colors mt-1"
-              >
-                <Trash2 size={13} />
-              </button>
-            </div>
-          ))}
-          <button
-            onClick={() => set('terms', [...data.terms, ''])}
-            className="w-full flex items-center justify-center gap-2 py-2 rounded-md border border-dashed border-muted-foreground/30 text-muted-foreground text-xs hover:bg-muted/50 transition-colors"
-          >
-            <Plus size={13} /> Add Term
+        {/* 2. Invoice Details */}
+        <Section num={2} title="Invoice Details">
+          <div className="grid grid-cols-2 gap-4">
+            <div><label className={labelCls}>Bill No.</label><input className={inputCls} placeholder="4" value={data.invoiceNumber} onChange={e => set('invoiceNumber', e.target.value)} /></div>
+            <div><label className={labelCls}>Bill Date</label><input type="date" className={inputCls} value={data.invoiceDate} onChange={e => set('invoiceDate', e.target.value)} /></div>
+          </div>
+          <div className="flex items-center gap-2 mt-3 pl-1">
+            <input type="checkbox" id="igst" checked={data.igst} onChange={e => set('igst', e.target.checked)} className="w-4 h-4 rounded-sm border-gray-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer" />
+            <label htmlFor="igst" className="text-[11px] font-bold text-gray-600 block pt-0.5 cursor-pointer select-none">USE IGST (INTER-STATE)</label>
+          </div>
+        </Section>
+
+        {/* 3. Bill To (Client) */}
+        <Section num={3} title="Bill To (Client)">
+          <div>
+            <label className={labelCls}>Client Name</label>
+            <input className={inputCls} placeholder="AARADHYA SAREES" value={data.clientName} onChange={e => set('clientName', e.target.value)} />
+          </div>
+          <div>
+            <label className={labelCls}>Address</label>
+            <input className={inputCls} placeholder="G-6, De-Ventura Textile Hub..." value={data.clientAddress} onChange={e => set('clientAddress', e.target.value)} />
+          </div>
+          <div className="grid grid-cols-2 gap-x-4 gap-y-3">
+            <div><label className={labelCls}>City</label><input className={inputCls} placeholder="Surat" value={data.clientCity} onChange={e => set('clientCity', e.target.value)} /></div>
+            <div><label className={labelCls}>State</label><input className={inputCls} placeholder="Gujarat" value={data.clientState} onChange={e => set('clientState', e.target.value)} /></div>
+            <div><label className={labelCls}>Pincode</label><input className={inputCls} placeholder="395002" value={data.clientPincode} onChange={e => set('clientPincode', e.target.value)} /></div>
+            <div><label className={labelCls}>Phone</label><input className={inputCls} placeholder="9624657000" value={data.clientPhone} onChange={e => set('clientPhone', e.target.value)} /></div>
+            <div><label className={labelCls}>GSTIN</label><input className={inputCls} placeholder="24AHCP..." value={data.clientGstin} onChange={e => set('clientGstin', e.target.value)} /></div>
+            <div><label className={labelCls}>PAN</label><input className={inputCls} placeholder="AHCP..." value={data.clientPan} onChange={e => set('clientPan', e.target.value)} /></div>
+          </div>
+        </Section>
+
+        {/* 4. Items / Products */}
+        <Section num={4} title="Items / Products">
+          <div className="space-y-4">
+            {data.items.map((item, idx) => (
+              <div key={item.id} className="bg-slate-50 border border-slate-200 rounded-sm p-4 relative">
+                
+                <div className="flex items-center justify-between mb-4">
+                  <span className="text-[11px] font-bold text-slate-700">Item #{idx + 1}</span>
+                  <button onClick={() => removeItem(item.id)} disabled={data.items.length <= 1} className="text-red-400 hover:text-red-600 transition-colors p-1" title="Remove Item">
+                    <Trash2 size={14} className={data.items.length <= 1 ? "opacity-50 cursor-not-allowed" : ""} />
+                  </button>
+                </div>
+
+                <div className="grid grid-cols-2 gap-x-4 gap-y-4">
+                  <div className="col-span-2">
+                    <label className={labelCls}>Description Of Goods</label>
+                    <input className={inputCls} placeholder="Sarees Job Work" value={item.name} onChange={e => setItem(item.id, { name: e.target.value })} />
+                  </div>
+                  <div>
+                    <label className={labelCls}>P.Ch.No.</label>
+                    <input className={inputCls} placeholder="1090" value={item.pchNo} onChange={e => setItem(item.id, { pchNo: e.target.value })} />
+                  </div>
+                  <div>
+                    <label className={labelCls}>HSN</label>
+                    <input className={inputCls} placeholder="540752" value={item.hsnSac} onChange={e => setItem(item.id, { hsnSac: e.target.value })} />
+                  </div>
+                  <div>
+                    <label className={labelCls}>Quantity</label>
+                    <input type="number" className={inputCls} placeholder="e.g. 274" value={item.qty || ''} onChange={e => setItem(item.id, { qty: Number(e.target.value) })} />
+                  </div>
+                  <div>
+                    <label className={labelCls}>Rate (₹)</label>
+                    <input type="number" className={inputCls} placeholder="e.g. 75" value={item.rate || ''} onChange={e => setItem(item.id, { rate: Number(e.target.value) })} />
+                  </div>
+                  <div>
+                    <label className={labelCls}>Discount %</label>
+                    <input type="number" className={inputCls} placeholder="e.g. 5" value={item.discount || ''} onChange={e => setItem(item.id, { discount: Number(e.target.value) })} />
+                  </div>
+                  <div>
+                    <label className={labelCls}>Tax %</label>
+                    <div className="relative">
+                      <select className={`${inputCls} appearance-none pr-8 cursor-pointer`} value={item.taxRate} onChange={e => setItem(item.id, { taxRate: Number(e.target.value) })}>
+                        <option value={0}>0%</option>
+                        <option value={5}>5%</option>
+                        <option value={12}>12%</option>
+                        <option value={18}>18%</option>
+                        <option value={28}>28%</option>
+                      </select>
+                      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-500">
+                        <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            ))}
+          </div>
+          <button onClick={addItem} className="mt-4 w-full flex items-center justify-center gap-2 rounded-sm border border-dashed border-gray-300 py-2.5 text-[12px] font-bold text-indigo-500 hover:bg-indigo-50 hover:border-indigo-200 transition-colors">
+            <Plus size={14} /> Add Item
           </button>
-        </div>
-      </section>
+        </Section>
+
+
+
+        {/* 6. Bank Details */}
+        <Section num={6} title="Bank Details">
+           <div className="space-y-3">
+             <div><label className={labelCls}>Bank Name</label><input className={inputCls} placeholder="THE VARACHHA CO-OP BANK LTD" value={data.bank?.bankName || ''} onChange={e => setBank('bankName', e.target.value)} /></div>
+             <div><label className={labelCls}>Account Number</label><input className={inputCls} placeholder="00130111471559" value={data.bank?.accountNumber || ''} onChange={e => setBank('accountNumber', e.target.value)} /></div>
+             <div><label className={labelCls}>IFSC Code</label><input className={inputCls} placeholder="VARA0289001" value={data.bank?.ifscCode || ''} onChange={e => setBank('ifscCode', e.target.value)} /></div>
+           </div>
+        </Section>
+
+        {/* 7. Authorised Signature */}
+        <Section num={7} title="Authorised Signature">
+           <div>
+             <label className={labelCls}>Signature</label>
+             <label className="border border-dashed border-gray-300 rounded-sm p-3 h-[42px] flex items-center justify-center text-[11px] font-semibold text-gray-400 gap-2 cursor-pointer hover:bg-gray-50 transition-colors w-full cursor-pointer relative overflow-hidden">
+               <Upload size={14} /> {data.signatureUrl ? 'Change Signature Image' : 'Upload Signature Image'}
+               <input 
+                 type="file" 
+                 accept="image/*" 
+                 className="hidden" 
+                 onChange={(e) => {
+                   const file = e.target.files?.[0];
+                   if (file) {
+                     const reader = new FileReader();
+                     reader.onloadend = () => {
+                       set('signatureUrl', reader.result as string);
+                     };
+                     reader.readAsDataURL(file);
+                   }
+                 }} 
+               />
+             </label>
+             {data.signatureUrl && (
+               <div className="mt-2 flex justify-between items-center">
+                 <img src={data.signatureUrl} alt="Signature" className="h-8 object-contain" />
+                 <button onClick={() => set('signatureUrl', '')} className="text-[10px] font-bold text-red-400 flex items-center gap-1 hover:text-red-500">
+                   <Trash2 size={12} /> Remove
+                 </button>
+               </div>
+             )}
+           </div>
+        </Section>
+
+        {/* 8. Terms & Conditions */}
+        <Section num={8} title="Terms & Conditions">
+           <div className="space-y-2">
+             {data.terms.map((term, idx) => (
+                <div key={idx} className="flex gap-2 items-center">
+                  <div className="w-6 flex justify-center text-[11px] font-bold text-gray-400">({idx + 1})</div>
+                  <input className={inputCls} value={term} onChange={e => updateTerm(idx, e.target.value)} />
+                  <button onClick={() => removeTerm(idx)} className="text-red-400 hover:text-red-600 transition-colors bg-red-50 p-1.5 rounded-sm" title="Remove Term">
+                    <Trash2 size={14}/>
+                  </button>
+                </div>
+             ))}
+             <button onClick={addTerm} className="mt-3 w-full flex items-center justify-center gap-2 rounded-sm border border-dashed border-gray-300 py-2.5 text-[11px] font-bold text-gray-500 hover:bg-gray-50 transition-colors">
+               <Plus size={13} /> Add Term
+             </button>
+           </div>
+        </Section>
+
+      </div>
     </div>
   );
 }

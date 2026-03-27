@@ -202,8 +202,6 @@ export interface InvoiceData {
   companyPhone: string;
   companyGstin: string;
   companyPan: string;
-  companyLogoLeftUrl: string;   // Added for left logo
-  companyLogoRightUrl: string;  // Added for right logo
 
   // Bill To
   clientName: string;
@@ -262,26 +260,24 @@ export interface ChallanData {
 
 export const defaultInvoiceData: InvoiceData = {
   companyName: 'RUSHIRAJ CREATION',
-  companyAddress: 'E-196, Matrushakti Society, Nr. Nandanvan Society, Punagam, Surat',
-  companyCity: 'Surat',
-  companyState: 'Gujarat',
-  companyPincode: '395006',
+  companyAddress: 'E-196 MATRUSHKTI SOCIETY NR NANDANVAN SOCIETY PUNAGAM',
+  companyCity: 'SURAT',
+  companyState: 'GUJARAT',
+  companyPincode: '395010',
   companyPhone: '96246 57000',
   companyGstin: '24AQPPD4620G2Z3',
   companyPan: 'AQPPD4620G',
-  companyLogoLeftUrl: '',
-  companyLogoRightUrl: '',
 
   clientName: 'AARADHYA SAREES',
-  clientAddress: 'G-6, DE-VENTURA TEXTILE HUB, RING ROAD SURAT',
-  clientCity: 'Surat',
-  clientState: 'Gujarat',
+  clientAddress: 'G-6 DE-VENTURA TEXTILE HUB RING ROAD',
+  clientCity: 'SURAT',
+  clientState: 'GUJARAT',
   clientPincode: '395002',
-  clientPhone: '9624657000 | 8469464128',
+  clientPhone: '9737712101',
   clientGstin: '24AHCPN8413B1ZT',
   clientPan: 'AHCPN8413H',
 
-  invoiceNumber: '4',
+  invoiceNumber: 'RC-01',
   invoiceDate: '2026-03-06',
 
   signatureUrl: '',
@@ -289,12 +285,12 @@ export const defaultInvoiceData: InvoiceData = {
   items: [
     {
       id: '1',
-      name: 'Sarees Job Work',
-      pchNo: '1090',
+      name: 'Lace Work',
+      pchNo: '01',
       hsnSac: '540752',
-      qty: 274,
+      qty: 0,
       unit: 'Pcs',
-      rate: 75,
+      rate: 0,
       discount: 5,
       discountType: 'percent',
       taxRate: 5,
@@ -303,8 +299,8 @@ export const defaultInvoiceData: InvoiceData = {
 
   bank: {
     bankName: 'THE VARACHHA CO-OP BANK LTD',
-    accountNumber: '00130111471559',
-    ifscCode: 'VARA0289001',
+    accountNumber: '01230110423255',
+    ifscCode: 'VARA0289012',
   },
 
   paidDetails: {
@@ -333,11 +329,11 @@ export const defaultChallanData: ChallanData = {
   orderNo: '',
   date: new Date().toISOString().split('T')[0],
   items: [
-    { id: '1', srNo: '1', particulars: 'pic', qty: '', rate: 96, amount: 96 },
-    { id: '2', srNo: '2', particulars: 'pic', qty: '', rate: 79, amount: 79 },
-    { id: '3', srNo: '3', particulars: 'pic', qty: '', rate: 97, amount: 97 },
+    { id: '1', srNo: '1', particulars: 'pic', qty: '', rate: 0, amount: 0 },
+    { id: '2', srNo: '2', particulars: 'pic', qty: '', rate: 0, amount: 0 },
+    { id: '3', srNo: '3', particulars: 'pic', qty: '', rate: 0, amount: 0 },
   ],
-  totalAmount: 2744,
+  totalAmount: 0,
   receivedBy: '',
   signatureUrl: '',
 };

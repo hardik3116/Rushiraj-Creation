@@ -55,12 +55,12 @@ export function ChallanForm({ data, onChange }: Props) {
         </h3>
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className={labelCls}>From (Sender)</label>
-            <input className={inputCls} value={data.from} onChange={e => set('from', e.target.value)} placeholder="K.M. CREATION" />
-          </div>
-          <div>
             <label className={labelCls}>To (Receiver)</label>
             <input className={inputCls} value={data.to} onChange={e => set('to', e.target.value)} placeholder="RUSHIRAJ CREATION" />
+          </div>
+          <div>
+            <label className={labelCls}>From (Sender)</label>
+            <input className={inputCls} value={data.from} onChange={e => set('from', e.target.value)} placeholder="K.M. CREATION" />
           </div>
         </div>
       </section>
@@ -109,13 +109,18 @@ export function ChallanForm({ data, onChange }: Props) {
                 </div>
                 <div>
                   <label className={labelCls}>Qty</label>
-                  <input className={inputCls} value={item.qty} onChange={e => setItem(item.id, { qty: e.target.value })} />
+                  <input className={inputCls} value={item.qty} onChange={e => {
+                    const val = e.target.value;
+                    const computedAmount = (parseFloat(val) || 0) * (item.rate || 0);
+                    setItem(item.id, { qty: val, amount: computedAmount });
+                  }} />
                 </div>
                 <div>
                   <label className={labelCls}>Rate</label>
                   <input type="number" className={inputCls} value={item.rate || ''} onChange={e => {
                     const r = parseFloat(e.target.value) || 0;
-                    setItem(item.id, { rate: r, amount: r });
+                    const computedAmount = (parseFloat(item.qty) || 0) * r;
+                    setItem(item.id, { rate: r, amount: computedAmount });
                   }} />
                 </div>
               </div>
