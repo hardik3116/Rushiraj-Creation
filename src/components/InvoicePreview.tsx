@@ -58,7 +58,7 @@ export const InvoicePreview = React.forwardRef<HTMLDivElement, Props>(({ data },
   });
 
   return (
-    <div ref={ref} id="invoice-preview" className="bg-white w-[794px] min-h-[1123px] print:min-h-0 pb-8 pt-8 px-8 box-border text-[12px] text-[#111] mx-auto relative print:w-full print:h-auto print:overflow-hidden print:pb-2" style={{ fontFamily: "'Inter', system-ui, -apple-system, sans-serif" }}>
+    <div ref={ref} id="invoice-preview" className="bg-white w-[794px] min-h-[1123px] print:min-h-0 pb-8 pt-8 px-8 box-border text-[12px] text-[#111] mx-auto relative print:w-full print:h-auto print:overflow-hidden print:pb-2" style={{ fontFamily: "'Inter', Arial, sans-serif" }}>
       
       {/* HEADER SECTION */}
       <div className="flex justify-between items-start mb-6">

@@ -325,7 +325,7 @@ export const defaultInvoiceData: InvoiceData = {
 export const defaultChallanData: ChallanData = {
   from: 'K.M. CREATION',
   to: 'RUSHIRAJ CREATION',
-  challanNo: '10',
+  challanNo: 'RC-01',
   orderNo: '',
   date: new Date().toISOString().split('T')[0],
   items: [

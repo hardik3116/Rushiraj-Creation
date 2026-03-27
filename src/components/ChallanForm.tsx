@@ -55,12 +55,12 @@ export function ChallanForm({ data, onChange }: Props) {
         </h3>
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className={labelCls}>To (Receiver)</label>
-            <input className={inputCls} value={data.to} onChange={e => set('to', e.target.value)} placeholder="RUSHIRAJ CREATION" />
-          </div>
-          <div>
             <label className={labelCls}>From (Sender)</label>
             <input className={inputCls} value={data.from} onChange={e => set('from', e.target.value)} placeholder="K.M. CREATION" />
+          </div>
+          <div>
+            <label className={labelCls}>To (Receiver)</label>
+            <input className={inputCls} value={data.to} onChange={e => set('to', e.target.value)} placeholder="RUSHIRAJ CREATION" />
           </div>
         </div>
       </section>
