@@ -323,15 +323,13 @@ export const defaultInvoiceData: InvoiceData = {
 };
 
 export const defaultChallanData: ChallanData = {
-  from: 'K.M. CREATION',
-  to: 'RUSHIRAJ CREATION',
+  from: 'RUSHIRAJ CREATION',
+  to: 'K.M. CREATION',
   challanNo: 'RC-01',
   orderNo: '',
   date: new Date().toISOString().split('T')[0],
   items: [
-    { id: '1', srNo: '1', particulars: 'pic', qty: '', rate: 0, amount: 0 },
-    { id: '2', srNo: '2', particulars: 'pic', qty: '', rate: 0, amount: 0 },
-    { id: '3', srNo: '3', particulars: 'pic', qty: '', rate: 0, amount: 0 },
+
   ],
   totalAmount: 0,
   receivedBy: '',

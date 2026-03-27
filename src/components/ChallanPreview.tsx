@@ -61,15 +61,15 @@ const ChallanSingle = ({ data }: Props) => {
         DELIVERY CHALLAN
       </div>
 
-      {/* ── FROM / TO ── */}
+      {/* ── TO / FROM ── */}
       <div style={{ display: 'flex', borderBottom: '1px solid #2a5c8a' }}>
         <div style={{ flex: 1, padding: '4px 10px', borderRight: '1px solid #2a5c8a' }}>
-          <div style={{ fontSize: '9px', color: '#555', fontWeight: 700, marginBottom: '1px' }}>FROM :</div>
-          <div style={{ fontWeight: 700, fontSize: '13px', color: '#111' }}>{data.from}</div>
-        </div>
-        <div style={{ flex: 1, padding: '4px 10px', position: 'relative' }}>
           <div style={{ fontSize: '9px', color: '#555', fontWeight: 700, marginBottom: '1px' }}>TO :</div>
           <div style={{ fontWeight: 700, fontSize: '13px', color: '#111' }}>{data.to}</div>
+        </div>
+        <div style={{ flex: 1, padding: '4px 10px', position: 'relative' }}>
+          <div style={{ fontSize: '9px', color: '#555', fontWeight: 700, marginBottom: '1px' }}>FROM :</div>
+          <div style={{ fontWeight: 700, fontSize: '13px', color: '#111' }}>{data.from}</div>
           {data.challanNo && (
             <div style={{
               position: 'absolute', top: '5px', right: '10px',
