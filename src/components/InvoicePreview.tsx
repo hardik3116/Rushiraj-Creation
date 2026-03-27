@@ -62,10 +62,10 @@ export const InvoicePreview = React.forwardRef<HTMLDivElement, Props>(({ data },
       
       {/* HEADER SECTION */}
       <div className="flex justify-between items-start mb-6">
-        <div className="flex items-center gap-4">
-          <div className="w-16 h-16 bg-[#1E3A8A] text-white flex flex-col items-center justify-center font-bold text-[22px] rounded-sm leading-none">
+        <div className="flex items-start gap-4">
+          <div className="w-16 h-16 bg-[#1E3A8A] text-white font-bold text-[32px] rounded-sm leading-none relative">
             {data.companyName.split(' ').filter(Boolean).map(n => n[0]).join('').substring(0, 2).toUpperCase().split('').map((char, idx) => (
-              <span key={idx} className={idx === 1 ? "ml-1.5" : ""}>{char}</span>
+              <span key={idx} className={idx === 0 ? "absolute top-1 left-2" : "absolute bottom-1 right-2"}>{char}</span>
             ))}
           </div>
           <div>
