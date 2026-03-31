@@ -58,7 +58,7 @@ export const InvoicePreview = React.forwardRef<HTMLDivElement, Props>(({ data },
   });
 
   return (
-    <div ref={ref} id="invoice-preview" className="bg-white w-[794px] min-h-[1123px] print:min-h-0 pb-8 pt-8 px-8 box-border text-[12px] text-[#111] mx-auto relative print:w-full print:h-auto print:overflow-hidden print:pb-2" style={{ fontFamily: "'Inter', Arial, sans-serif" }}>
+    <div ref={ref} id="invoice-preview" className="bg-white w-[794px] min-h-[1123px] pb-3 pt-3 px-6 box-border text-[12px] text-[#111] mx-auto relative" style={{ fontFamily: "'Inter', Arial, sans-serif" }}>
       
       {/* HEADER SECTION */}
       <div className="flex justify-between items-start mb-6">
@@ -86,7 +86,7 @@ export const InvoicePreview = React.forwardRef<HTMLDivElement, Props>(({ data },
       <div className="flex justify-between mb-6">
         <div className="flex-1 pr-4">
           <div className="text-[11px] text-gray-500 font-bold mb-2 uppercase tracking-wide">BILL TO</div>
-          <h2 className="m-0 font-bold text-base text-gray-900 mb-1.5">{data.clientName}</h2>
+          <h2 className="m-0 font-bold text-[14px] text-gray-900 mb-1.5">{data.clientName}</h2>
           <p className="m-0 text-gray-700 text-[13px] leading-snug">{data.clientAddress}, {data.clientCity}, {data.clientPincode},<br/>{data.clientState}</p>
           <p className="m-0 text-gray-700 text-[13px] font-semibold mt-1.5">Mo: {data.clientPhone}</p>
           <div className="flex gap-4 text-gray-700 text-[12px] mt-1.5">
@@ -111,14 +111,14 @@ export const InvoicePreview = React.forwardRef<HTMLDivElement, Props>(({ data },
       <table className="w-full border-collapse mb-1 text-[12px]">
         <thead>
           <tr className="bg-[#1E3A8A] text-white">
-            <th className="py-2.5 px-2 text-left w-10 border border-[#1E3A8A]">#</th>
-            <th className="py-2.5 px-2 text-left border border-[#1E3A8A]">Item</th>
-            <th className="py-2.5 px-2 text-center w-20 border border-[#1E3A8A]">Qty</th>
-            <th className="py-2.5 px-2 text-right w-20 border border-[#1E3A8A]">Rate</th>
-            <th className="py-2.5 px-2 text-right w-28 border border-[#1E3A8A]">Discount</th>
-            <th className="py-2.5 px-2 text-right w-24 border border-[#1E3A8A]">Amount</th>
-            <th className="py-2.5 px-2 text-right w-28 border border-[#1E3A8A]">Taxes</th>
-            <th className="py-2.5 px-2 text-right w-28 border border-[#1E3A8A]">Total</th>
+            <th className="py-2.5 px-2 text-left w-10 border border-slate-400">#</th>
+            <th className="py-2.5 px-2 text-left border border-slate-400">Item</th>
+            <th className="py-2.5 px-2 text-center w-20 border border-slate-400">Qty</th>
+            <th className="py-2.5 px-2 text-right w-20 border border-slate-400">Rate</th>
+            <th className="py-2.5 px-2 text-right w-28 border border-slate-400">Discount</th>
+            <th className="py-2.5 px-2 text-right w-24 border border-slate-400">Amount</th>
+            <th className="py-2.5 px-2 text-right w-28 border border-slate-400">Taxes</th>
+            <th className="py-2.5 px-2 text-right w-28 border border-slate-400">Total</th>
           </tr>
         </thead>
         <tbody>
@@ -129,26 +129,26 @@ export const InvoicePreview = React.forwardRef<HTMLDivElement, Props>(({ data },
              const itemTax = itemTaxable * (item.taxRate / 100);
              const itemTotal = itemTaxable + itemTax;
              return (
-              <tr key={item.id} className="border-b border-gray-200">
-                <td className="py-2.5 px-2 border-l border-gray-200 align-top text-gray-700">{index + 1}</td>
-                <td className="py-2.5 px-2 align-top">
-                  <div className="font-bold text-[13px] text-gray-900">{item.name}</div>
-                  {item.pchNo && <div className="text-[11px] font-semibold text-gray-500 mt-1">P.CH NO: {item.pchNo}</div>}
+              <tr key={item.id} className="border-b border-slate-300">
+                <td className="py-2.5 px-2 border border-slate-300 align-top text-gray-700">{index + 1}</td>
+                <td className="py-2.5 px-2 border border-slate-300 align-top">
+                  <div className="font-bold text-[13px] text-gray-900 whitespace-nowrap">{item.name}</div>
+                  {item.pchNo && <div className="text-[11px] font-semibold text-gray-500 mt-1">{item.pchNo}</div>}
                 </td>
-                <td className="py-2.5 px-2 text-center align-top whitespace-nowrap text-gray-800 font-semibold">{item.qty} {item.unit}</td>
-                <td className="py-2.5 px-2 text-right align-top text-gray-800">{item.rate.toFixed(2)}</td>
-                <td className="py-2.5 px-2 text-right align-top text-gray-800">{itemDiscount.toLocaleString('en-IN', {minimumFractionDigits:2})} <span className="text-gray-500 font-medium">({item.discount}%)</span></td>
-                <td className="py-2.5 px-2 text-right align-top text-gray-800">{itemTaxable.toLocaleString('en-IN', {minimumFractionDigits:2})}</td>
-                <td className="py-2.5 px-2 text-right align-top text-gray-800">{itemTax.toLocaleString('en-IN', {minimumFractionDigits:2})} <span className="text-gray-500 font-medium">({item.taxRate}%)</span></td>
-                <td className="py-2.5 px-2 text-right border-r border-gray-200 font-bold align-top text-[13px] text-gray-900">{itemTotal.toLocaleString('en-IN', {minimumFractionDigits:2})}</td>
+                <td className="py-2.5 px-2 border border-slate-300 text-center align-top whitespace-nowrap text-gray-800 font-semibold">{item.qty} {item.unit}</td>
+                <td className="py-2.5 px-2 border border-slate-300 text-right align-top text-gray-800">{item.rate.toFixed(2)}</td>
+                <td className="py-2.5 px-2 border border-slate-300 text-right align-top text-gray-800">{itemDiscount.toLocaleString('en-IN', {minimumFractionDigits:2})} <span className="text-gray-500 font-medium">({item.discount}%)</span></td>
+                <td className="py-2.5 px-2 border border-slate-300 text-right align-top text-gray-800">{itemTaxable.toLocaleString('en-IN', {minimumFractionDigits:2})}</td>
+                <td className="py-2.5 px-2 border border-slate-300 text-right align-top text-gray-800">{itemTax.toLocaleString('en-IN', {minimumFractionDigits:2})} <span className="text-gray-500 font-medium">({item.taxRate}%)</span></td>
+                <td className="py-2.5 px-2 border border-slate-300 text-right font-bold align-top text-[13px] text-gray-900">{itemTotal.toLocaleString('en-IN', {minimumFractionDigits:2})}</td>
               </tr>
             )
           })}
           {Array.from({length: Math.max(0, 4 - data.items.length)}).map((_, i) => (
-            <tr key={`empty-${i}`} className="border-b border-gray-200 h-[40px]">
-              <td className="border-l border-gray-200"></td>
-              <td></td><td></td><td></td><td></td><td></td><td></td>
-              <td className="border-r border-gray-200"></td>
+            <tr key={`empty-${i}`} className="border-b border-slate-300 h-[40px]">
+              <td className="border border-slate-300"></td>
+              <td className="border border-slate-300"></td><td className="border border-slate-300"></td><td className="border border-slate-300"></td><td className="border border-slate-300"></td><td className="border border-slate-300"></td><td className="border border-slate-300"></td>
+              <td className="border border-slate-300"></td>
             </tr>
           ))}
         </tbody>
@@ -175,16 +175,16 @@ export const InvoicePreview = React.forwardRef<HTMLDivElement, Props>(({ data },
            <table className="w-full border-collapse text-[11px] mb-3">
              <thead>
                <tr className="bg-[#1E3A8A] text-white">
-                 <th className="py-2 px-2 text-left border border-[#1E3A8A]">HSN/SAC</th>
-                 <th className="py-2 px-2 text-right border border-[#1E3A8A]">Taxable Amount</th>
+                 <th className="py-2 px-2 text-left border border-slate-400">HSN/SAC</th>
+                 <th className="py-2 px-2 text-right border border-slate-400">Taxable Amount</th>
                  {!data.igst && (
                    <>
-                     <th className="py-2 px-2 text-right border border-[#1E3A8A]">CGST</th>
-                     <th className="py-2 px-2 text-right border border-[#1E3A8A]">SGST</th>
+                     <th className="py-2 px-2 text-right border border-slate-400">CGST</th>
+                     <th className="py-2 px-2 text-right border border-slate-400">SGST</th>
                    </>
                  )}
-                 {data.igst && <th className="py-2 px-2 text-right border border-[#1E3A8A]">IGST</th>}
-                 <th className="py-2 px-2 text-right border border-[#1E3A8A]">Tax Amount</th>
+                 {data.igst && <th className="py-2 px-2 text-right border border-slate-400">IGST</th>}
+                 <th className="py-2 px-2 text-right border border-slate-400">Tax Amount</th>
                </tr>
              </thead>
              <tbody>
@@ -192,33 +192,33 @@ export const InvoicePreview = React.forwardRef<HTMLDivElement, Props>(({ data },
                   const taxHalf = (val.taxable * (val.taxRate/100)) / 2;
                   const taxFull = taxHalf * 2;
                   return (
-                    <tr key={hsn} className="border-b border-gray-200 h-8 text-gray-800">
-                      <td className="py-1.5 px-2 border-l border-gray-200 font-semibold">{hsn}</td>
-                      <td className="py-1.5 px-2 text-right">{val.taxable.toLocaleString('en-IN', {minimumFractionDigits:2})}</td>
+                    <tr key={hsn} className="border-b border-slate-300 h-8 text-gray-800">
+                      <td className="py-1.5 px-2 border border-slate-300 font-semibold">{hsn}</td>
+                      <td className="py-1.5 px-2 border border-slate-300 text-right">{val.taxable.toLocaleString('en-IN', {minimumFractionDigits:2})}</td>
                       {!data.igst && (
                         <>
-                          <td className="py-1.5 px-2 text-right">{taxHalf.toLocaleString('en-IN', {minimumFractionDigits:2})} <span className="text-gray-500 font-medium">({val.taxRate/2}%)</span></td>
-                          <td className="py-1.5 px-2 text-right">{taxHalf.toLocaleString('en-IN', {minimumFractionDigits:2})} <span className="text-gray-500 font-medium">({val.taxRate/2}%)</span></td>
+                          <td className="py-1.5 px-2 border border-slate-300 text-right">{taxHalf.toLocaleString('en-IN', {minimumFractionDigits:2})} <span className="text-gray-500 font-medium">({val.taxRate/2}%)</span></td>
+                          <td className="py-1.5 px-2 border border-slate-300 text-right">{taxHalf.toLocaleString('en-IN', {minimumFractionDigits:2})} <span className="text-gray-500 font-medium">({val.taxRate/2}%)</span></td>
                         </>
                       )}
                       {data.igst && (
-                        <td className="py-1.5 px-2 text-right">{taxFull.toLocaleString('en-IN', {minimumFractionDigits:2})} <span className="text-gray-500 font-medium">({val.taxRate}%)</span></td>
+                        <td className="py-1.5 px-2 border border-slate-300 text-right">{taxFull.toLocaleString('en-IN', {minimumFractionDigits:2})} <span className="text-gray-500 font-medium">({val.taxRate}%)</span></td>
                       )}
-                      <td className="py-1.5 px-2 text-right border-r border-gray-200 font-semibold">{taxFull.toLocaleString('en-IN', {minimumFractionDigits:2})}</td>
+                      <td className="py-1.5 px-2 border border-slate-300 text-right font-semibold">{taxFull.toLocaleString('en-IN', {minimumFractionDigits:2})}</td>
                     </tr>
                   )
                })}
                <tr className="bg-gray-50 font-bold text-gray-900 h-8 text-[12px]">
-                 <td className="py-1.5 px-2 border-l border-gray-200 border-b border-gray-200">Total</td>
-                 <td className="py-1.5 px-2 text-right border-b border-gray-200">{taxableAmount.toLocaleString('en-IN', {minimumFractionDigits:2})}</td>
+                 <td className="py-1.5 px-2 border border-slate-300">Total</td>
+                 <td className="py-1.5 px-2 border border-slate-300 text-right">{taxableAmount.toLocaleString('en-IN', {minimumFractionDigits:2})}</td>
                  {!data.igst && (
                    <>
-                     <td className="py-1.5 px-2 text-right border-b border-gray-200">{cgstAmount.toLocaleString('en-IN', {minimumFractionDigits:2})}</td>
-                     <td className="py-1.5 px-2 text-right border-b border-gray-200">{sgstAmount.toLocaleString('en-IN', {minimumFractionDigits:2})}</td>
+                     <td className="py-1.5 px-2 border border-slate-300 text-right">{cgstAmount.toLocaleString('en-IN', {minimumFractionDigits:2})}</td>
+                     <td className="py-1.5 px-2 border border-slate-300 text-right">{sgstAmount.toLocaleString('en-IN', {minimumFractionDigits:2})}</td>
                    </>
                  )}
-                 {data.igst && <td className="py-1.5 px-2 text-right border-b border-gray-200">{igstAmount.toLocaleString('en-IN', {minimumFractionDigits:2})}</td>}
-                 <td className="py-1.5 px-2 text-right border-r border-gray-200 border-b border-gray-200">{totalTaxAmount.toLocaleString('en-IN', {minimumFractionDigits:2})}</td>
+                 {data.igst && <td className="py-1.5 px-2 border border-slate-300 text-right">{igstAmount.toLocaleString('en-IN', {minimumFractionDigits:2})}</td>}
+                 <td className="py-1.5 px-2 border border-slate-300 text-right">{totalTaxAmount.toLocaleString('en-IN', {minimumFractionDigits:2})}</td>
                </tr>
              </tbody>
            </table>
@@ -229,12 +229,14 @@ export const InvoicePreview = React.forwardRef<HTMLDivElement, Props>(({ data },
 
            {/* BANK DETAILS */}
            {data.bank && (data.bank.bankName || data.bank.accountNumber || data.bank.ifscCode) && (
-             <div className="mt-5 border border-gray-200 rounded-sm p-3">
-               <div className="font-bold text-[12px] text-[#1E3A8A] mb-2 uppercase tracking-wide border-b border-gray-100 pb-1">Bank Details</div>
-               <div className="text-[11px] text-gray-800 space-y-1">
-                 {data.bank.bankName && <div><span className="font-semibold text-gray-600 w-24 inline-block">Bank Name:</span> <span className="font-bold">{data.bank.bankName}</span></div>}
-                 {data.bank.accountNumber && <div><span className="font-semibold text-gray-600 w-24 inline-block">Account No:</span> <span className="font-bold">{data.bank.accountNumber}</span></div>}
-                 {data.bank.ifscCode && <div><span className="font-semibold text-gray-600 w-24 inline-block">IFSC Code:</span> <span className="font-bold">{data.bank.ifscCode}</span></div>}
+             <div className="mt-4 border border-gray-200 rounded-sm p-3">
+               <div className="font-bold text-[11px] text-[#1E3A8A] mb-2 uppercase tracking-wide border-b border-gray-100 pb-1">Bank Details</div>
+               <div className="text-[10px] text-gray-800 space-y-0.5">
+                 <div className="flex gap-6">
+                   {data.bank.bankName && <span><span className="font-semibold text-gray-600">Bank Name:</span> <span className="font-bold">{data.bank.bankName}</span></span>}
+                   {data.bank.accountNumber && <span><span className="font-semibold text-gray-600">Account No:</span> <span className="font-bold">{data.bank.accountNumber}</span></span>}
+                 </div>
+                 {data.bank.ifscCode && <div><span className="font-semibold text-gray-600">IFSC Code:</span> <span className="font-bold">{data.bank.ifscCode}</span></div>}
                </div>
              </div>
            )}
@@ -300,10 +302,6 @@ export const InvoicePreview = React.forwardRef<HTMLDivElement, Props>(({ data },
              </div>
            </div>
         </div>
-      </div>
-      
-      <div className="absolute bottom-5 left-0 right-0 text-center text-[10px] font-semibold text-gray-400">
-        Generated using Bill PDF Tool
       </div>
 
     </div>

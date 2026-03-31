@@ -275,7 +275,7 @@ export const defaultInvoiceData: InvoiceData = {
   clientPincode: '395002',
   clientPhone: '9737712101',
   clientGstin: '24AHCPN8413B1ZT',
-  clientPan: 'AHCPN8413H',
+  clientPan: 'AHCPN8413B',
 
   invoiceNumber: 'RC-01',
   invoiceDate: '2026-03-06',
